@@ -1,0 +1,82 @@
+#!/bin/bash
+usage() {
+cat << EOF
+usage: $0 options
+
+install target packages, and tar all packages in /var/cache/apt/archive, then redirect the content of tarball to STDOUT.
+
+    options:
+    -h|--help print this message
+    --ppa       specify which ppa you want to get nvidia driver from. default is ppa:oem-solutions-group/nvidia-driver-staging
+                e.g. ppa:graphics-drivers/ppa
+    --deb       install specific debian pacakge.
+    --debug     print all message, and will not redirect content of tarball to STDOUT.
+    --cmd	execute command to install packages. e.g. unattended-upgrade
+
+EOF
+exit 1
+}
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        -h | --help)
+            usage 0
+            exit 0
+            ;;
+        --ppa)
+	    while [ -n "$2" ]; do
+		    [ -z "${2/#--*/}" ] && break
+                    shift
+	            PPA="$PPA $1"
+	    done
+            ;;
+        --deb)
+	    while [ -n "$2" ]; do
+		    [ -z "${2/#--*/}" ] && break
+                    shift
+	            DEB="$DEB $1"
+	    done
+            ;;
+        --cmd)
+            shift
+            CMD="$1"
+            ;;
+        --propose)
+            echo "deb http://tw.archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-proposed" >> /etc/apt/sources.list.d/propose.list
+            ;;
+        --debug)
+	    DEBUG=1
+            ;;
+        *)
+       esac
+       shift
+done
+
+[ "$DEBUG" == "1" ] && set -x
+[ "$DEBUG" == "1" ] || exec 6>&1
+[ "$DEBUG" == "1" ] || exec >> /tmp/$(basename $0).log
+
+# keep copy deb packages, because they might be cleaned up by design.
+tmpfolder=$(mktemp -d)
+mkdir -p $tmpfolder/deps
+while [ 1 ]; do rsync -q --ignore-missing-args /var/cache/apt/archives/*.deb $tmpfolder/deps/ ;sleep 10;done &
+
+for target_ppa in $PPA;do
+    add-apt-repository -y $target_ppa
+done
+if [ -n "$DEB" ];then
+	apt-get update
+	apt-get install --no-install-recommends -y $DEB
+fi
+if [ -n "$CMD" ];then
+	apt-get update
+	$CMD
+fi
+rsync -q --ignore-missing-args /var/cache/apt/archives/*.deb $tmpfolder/deps/
+pushd $tmpfolder/deps/
+tar --use-compress-program=pxz -cf $tmpfolder/deps.tar.xz *.deb
+popd
+[ "$DEBUG" == "1" ] || exec 1>&6 6>&-
+[ "$DEBUG" == "1" ] || cat $tmpfolder/deps.tar.xz
+exit 0
