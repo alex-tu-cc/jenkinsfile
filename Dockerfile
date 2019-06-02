@@ -20,8 +20,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-FROM openjdk:8-jdk
-LABEL MAINTAINER="Nicolas De Loof <nicolas.deloof@gmail.com>"
+FROM ubuntu:bionic
+LABEL MAINTAINER="Alex Tu <alextu@cctu.space>"
 
 ARG user=jenkins
 ARG group=jenkins
@@ -29,6 +29,7 @@ ARG uid=1000
 ARG gid=1000
 ARG JENKINS_AGENT_HOME=/home/${user}
 
+ENV JENKINS_USER ${user}
 ENV JENKINS_AGENT_HOME ${JENKINS_AGENT_HOME}
 
 RUN groupadd -g ${gid} ${group} \
@@ -36,9 +37,10 @@ RUN groupadd -g ${gid} ${group} \
 
 # setup SSH server
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y openssh-server \
+    && apt-get install --no-install-recommends -y openssh-server default-jre git\
     && rm -rf /var/lib/apt/lists/*
 RUN sed -i /etc/ssh/sshd_config \
+        -e 's/#Port.*/Port 2222/' \
         -e 's/#PermitRootLogin.*/PermitRootLogin no/' \
         -e 's/#RSAAuthentication.*/RSAAuthentication yes/'  \
         -e 's/#PasswordAuthentication.*/PasswordAuthentication no/' \
@@ -46,11 +48,9 @@ RUN sed -i /etc/ssh/sshd_config \
         -e 's/#LogLevel.*/LogLevel INFO/' && \
     mkdir /var/run/sshd
 
-VOLUME "${JENKINS_AGENT_HOME}" "/tmp" "/run" "/var/run"
+VOLUME "${JENKINS_AGENT_HOME}"
 WORKDIR "${JENKINS_AGENT_HOME}"
 
-COPY setup-sshd /usr/local/bin/setup-sshd
+COPY setup /usr/local/bin/setup
 
-EXPOSE 22
-
-ENTRYPOINT ["setup-sshd"]
+ENTRYPOINT ["setup"]

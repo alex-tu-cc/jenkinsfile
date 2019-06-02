@@ -29,6 +29,14 @@ set -ex
 # or
 #  docker run -e "JENKINS_SLAVE_SSH_PUBKEY=<public key>" jenkinsci/ssh-slave
 
+set_docker() {
+   docker_gid=$(ls -l /var/run/docker.sock  | awk '{print $4}')
+   groupadd -g $docker_gid docker
+   adduser $JENKINS_USER docker
+}
+
+[ -e /var/run/docker.sock ] && set_docker
+
 write_key() {
 	mkdir -p "${JENKINS_AGENT_HOME}/.ssh"
 	echo "$1" > "${JENKINS_AGENT_HOME}/.ssh/authorized_keys"
