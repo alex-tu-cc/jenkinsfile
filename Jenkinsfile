@@ -1,27 +1,14 @@
 pipeline {
-    agent docker
+    agent none
     stages {
-/*
-        stage('setup') {
+        stage('pack fish') {
             agent {
                 docker {
                     label 'docker'
-                    image 'maven:3-alpine'
+                    image 'oem-taipei-bot'
                 }
             }
-            steps {
-                sh 'cat /etc/*-release'
-            }
-        }
-*/
-        stage('pack fish') {
-        ¦   agent {
-    ¦   ¦   ¦   docker {
-    ¦   ¦   ¦   ¦   label 'docker'
-    ¦   ¦   ¦   ¦   image 'oem-taipei-bot'
-    ¦   ¦   ¦   }
-    ¦   ¦   }
-            parallel bionic-base:{
+            parallel bionic-base: {
                 steps {
                     git clone -b pack-fish git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools
                     /lp-fish-tools/bin/pack-fish.sh --base bionic-base --deb tmux
@@ -34,18 +21,5 @@ pipeline {
                 }
             }
         }
-/*
-        stage('archlinux') {
-            agent {
-                docker {
-                    label 'docker'
-                    image 'base/archlinux'
-                }
-            }
-            steps {
-                sh 'cat /etc/*-release'
-            }
-        }
-*/
     }
 }
