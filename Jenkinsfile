@@ -11,8 +11,8 @@ pipeline {
                         }
                     }
                     steps {
-                        git clone -b pack-fish git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools
-                        /lp-fish-tools/bin/pack-fish.sh --base bionic-base --deb tmux
+                        sh 'git clone -b pack-fish git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools'
+                        sh '/lp-fish-tools/bin/pack-fish.sh --base bionic-base --deb tmux'
                     }
                 }
                 stage ('based on beaver-osp1') {
@@ -23,8 +23,8 @@ pipeline {
                         }
                     }
                     steps {
-                        git clone -b pack-fish git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools
-                        /lp-fish-tools/bin/pack-fish.sh --base bionic-base --deb tmux
+                        sh 'git clone -b pack-fish git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools'
+                        sh '/lp-fish-tools/bin/pack-fish.sh --base bionic-base --deb tmux'
                     }
                 }
             }
