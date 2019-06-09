@@ -7,7 +7,7 @@ pipeline {
                     agent {
                         docker {
                             label 'docker'
-                            image 'oem-taipei-bot'
+                            image 'somerville-jenkins.cctu.space:5000/oem-taipei-bot'
                         }
                     }
                     steps {
@@ -19,7 +19,7 @@ pipeline {
                     agent {
                         docker {
                             label 'docker'
-                            image 'oem-taipei-bot'
+                            image 'somerville-jenkins.cctu.space:5000/oem-taipei-bot'
                         }
                     }
                     steps {
