@@ -12,7 +12,7 @@ pipeline {
                 sh 'cat /etc/*-release'
             }
         }
-        stage('oem-taipei-bot') {
+        stage('oem-taipei-bot-1') {
             agent {
                 label 'docker'
             }
@@ -20,7 +20,7 @@ pipeline {
                 sh 'docker run --rm -it -h oem-taipei-bot --volumes-from docker-volumes somerville-jenkins.cctu.space:5000/oem-taipei-bot "echo yes"'
             }
         }
-        stage('oem-taipei-bot') {
+        stage('oem-taipei-bot-2') {
             agent {
                 docker {
                     label 'docker'
