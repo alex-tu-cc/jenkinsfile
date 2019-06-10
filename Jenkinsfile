@@ -15,7 +15,6 @@ pipeline {
         stage('oem-taipei-bot') {
             agent {
                 label 'docker'
-                }
             }
             steps {
                 sh 'docker run --rm -it -h oem-taipei-bot --volumes-from docker-volumes somerville-jenkins.cctu.space:5000/oem-taipei-bot "echo yes"'
