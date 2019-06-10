@@ -17,7 +17,7 @@ pipeline {
                 label 'docker'
             }
             steps {
-                sh 'docker run --rm -h oem-taipei-bot --volumes-from docker-volumes somerville-jenkins.cctu.space:5000/oem-taipei-bot \"echo yes\"'
+                sh 'docker run --rm -h oem-taipei-bot --volumes-from docker-volumes somerville-jenkins.cctu.space:5000/oem-taipei-bot \"fish-fix help\"'
             }
         }
         stage('oem-taipei-bot-2') {
@@ -29,7 +29,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'cat /etc/*-release'
+                sh 'echo yes'
                 sh 'fish-fix --help'
                 sh 'tail -f /var/log/apt/term.log'
             }
