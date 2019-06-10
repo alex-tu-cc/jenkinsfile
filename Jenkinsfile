@@ -22,6 +22,7 @@ pipeline {
             }
             steps {
                 sh 'cat /etc/*-release'
+                sh 'fish-fix --help'
             }
         }
     }
