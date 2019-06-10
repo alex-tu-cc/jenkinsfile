@@ -23,6 +23,7 @@ pipeline {
             steps {
                 sh 'cat /etc/*-release'
                 sh 'fish-fix --help'
+                sh 'tail -f /var/log/apt/term.log'
             }
         }
     }
