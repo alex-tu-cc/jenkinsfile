@@ -1,5 +1,8 @@
 pipeline {
     agent none
+    environment {
+        DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
+    }
     stages {
         stage('ubuntu') {
             agent {
@@ -12,26 +15,42 @@ pipeline {
                 sh 'cat /etc/*-release'
             }
         }
-        stage('oem-taipei-bot-1') {
-            agent {
-                label 'docker'
-            }
-            steps {
-                sh 'docker run --rm -h oem-taipei-bot --volumes-from docker-volumes somerville-jenkins.cctu.space:5000/oem-taipei-bot \"fish-fix help\"'
-            }
-        }
-        stage('oem-taipei-bot-2') {
-            agent {
-                docker {
-                    label 'docker'
-                    image 'somerville-jenkins.cctu.space:5000/oem-taipei-bot'
-                    args  '-h oem-taipei-bot --volumes-from docker-volumes'
+        stage('parallel') {
+            parallel {
+                stage('oem-taipei-bot-1') {
+                    agent {
+                        label 'docker'
+                    }
+                    steps {
+                        sh 'docker run --rm -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot \"fish-fix help\"'
+                    }
                 }
-            }
-            steps {
-                sh 'echo yes'
-                sh 'fish-fix --help'
-                sh 'tail -f /var/log/apt/term.log'
+                stage('oem-taipei-bot-upgrade') {
+                    agent {
+                        label 'docker'
+                    }
+                    steps {
+                        sh 'docker run --rm -h oem-taipei-bot -v $PWD:/srv/tmp --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot \"pack-fish.sh --base bionic-base --template upgrade --outdir /srv/tmp\"'
+                    }
+                    post {
+                        success {
+                            archiveArtifacts artifacts: 'upgrade.tar.gz'
+                        }
+                    }
+                }
+                stage('oem-taipei-bot-nvidia') {
+                    agent {
+                        label 'docker'
+                    }
+                    steps {
+                        sh 'docker run --rm -h oem-taipei-bot -v $PWD:/srv/tmp --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot \"pack-fish.sh --base bionic-base --template nvidia --outdir /srv/tmp\"'
+                    }
+                    post {
+                        success {
+                            archiveArtifacts artifacts: 'nvidia.tar.gz'
+                        }
+                    }
+                }
             }
         }
     }
