@@ -67,10 +67,12 @@ pipeline {
                         script {
                             try {
                                 sh 'id'
-                                sh 'mkdir -p /srv/tmp/${JOB_NAME}'
+                                sh 'mkdir -p /srv/tmp/${BUILD_TAG}-${STAGE_NAME}'
                                 sh 'docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes -v /srv/tmp/${JOB_NAME}:/srv/tmp ${DOCKER_REPO}/oem-taipei-bot \"git clone -b test-jenkins git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools && lp-fish-tools/bin/pack-fish.sh --base bionic-base --template nvidia --outdir /srv/tmp\"'
                                 sh 'cp /srv/tmp/${JOB_NAME}/nvidia_fish1.tar.gz ./'
+                                sh 'rm -rf /srv/tmp/${BUILD_TAG}-${STAGE_NAME}'
                             } catch (FlowInterruptedException interruptEx) {
+                                // no need this, somehow , docker instance always be terminate after user terminate job manually.
                                 sh 'docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}'
                             }
                         }
