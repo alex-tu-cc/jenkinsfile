@@ -43,11 +43,11 @@ pipeline {
                         label 'docker'
                     }
                     steps {
-                        sh 'docker run --rm -h oem-taipei-bot -v $PWD:/srv/tmp --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot \"git clone -b test-jenkins git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools && lp-fish-tools/bin/pack-fish.sh --base bionic-base --template nvidia --outdir /srv/tmp\"'
+                        sh 'docker run --rm -h oem-taipei-bot -v ${WORKSPACE}:/srv/tmp --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot \"git clone -b test-jenkins git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools && lp-fish-tools/bin/pack-fish.sh --base bionic-base --template nvidia --outdir /srv/tmp\"'
                     }
                     post {
                         success {
-                            archiveArtifacts artifacts: 'nvidia.tar.gz'
+                            archiveArtifacts artifacts: 'nvidia_fish1.tar.gz'
                         }
                     }
                 }
