@@ -44,8 +44,8 @@ pipeline {
                             mkdir -p ${OUTDIR}
                             rm -rf ${OUTDIR}/*
                             eval ${RUN_DOCKER_TAIPEI_BOT} \\"git clone -b test-jenkins git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools \\&\\& lp-fish-tools/bin/pack-fish.sh --base bionic-base --template ${TEMPLATE} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
-                            cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./
-                            echo cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./${TEMPLATE}-`date +%Y%m%d`_fish1.tar.gz
+                            //cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./
+                            cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./${TEMPLATE}-`date +%Y%m%d`_fish1.tar.gz
                             tar xf ${TEMPLATE}_fish1.tar.gz ./prepackage.dell
                             rm -rf ${OUTDIR}
                         '''
