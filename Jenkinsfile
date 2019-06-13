@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
         RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
-        TARGET_DEB = "plymouth upower network-manager thermald modemmanager dkms"
+        TARGET_DEB = "thermald"
     }
     stages {
         stage('prepare') {
@@ -49,6 +49,7 @@ pipeline {
                             rm -rf ${OUTDIR}/*
                             eval ${RUN_DOCKER_TAIPEI_BOT} \\"git clone -b test-jenkins git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools \\&\\& lp-fish-tools/bin/pack-fish.sh --base bionic-base --template ${TEMPLATE} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
                             cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./
+                            echo cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./${TEMPLATE}-`date +%Y%m%d`_fish1.tar.gz
                             tar xf ${TEMPLATE}_fish1.tar.gz ./prepackage.dell
                             rm -rf ${OUTDIR}
                         '''
