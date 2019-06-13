@@ -46,7 +46,7 @@ pipeline {
                     steps {
                         sh '''
                             mkdir -p ${OUTDIR}
-                            eval ${RUN_DOCKER_TAIPEI_BOT} \"pack-fish --base bionic-base --template ${TEMPLATE} --deb \\"${TARGET_DEB}\\" --outdir ${OUTDIR}\"
+                            eval ${RUN_DOCKER_TAIPEI_BOT} \"git clone -b test-jenkins git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools && lp-fish-tools/bin/pack-fish --base bionic-base --template ${TEMPLATE} --deb \\"${TARGET_DEB}\\" --outdir ${OUTDIR}\"
                             cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./
                             rm ${OUTDIR}/${TEMPLATE}_fish1.tar.gz
                         '''
