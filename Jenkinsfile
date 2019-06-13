@@ -25,11 +25,7 @@ pipeline {
             parallel {
                 stage('oem-taipei-bot-0') {
                     agent {
-                        docker {
-                            label 'docker'
-                            image "${env.DOCKER_REPO}/oem-taipei-bot"
-                            args 'fish-fix help'
-                        }
+                       label 'docker'
                     }
                     steps {
                         sh 'cat /etc/*-release'
