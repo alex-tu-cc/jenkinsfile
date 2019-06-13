@@ -46,47 +46,18 @@ pipeline {
                     steps {
                         sh '''
                             mkdir -p ${OUTDIR}
-                            eval ${RUN_DOCKER_TAIPEI_BOT} \"git clone -b test-jenkins git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools \\&\\& lp-fish-tools/bin/pack-fish --base bionic-base --template ${TEMPLATE} --deb \\"${TARGET_DEB}\\" --outdir ${OUTDIR}\"
+                            rm -rf ${OUTDIR}/*
+                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"git clone -b test-jenkins git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools \\&\\& lp-fish-tools/bin/pack-fish.sh --base bionic-base --template ${TEMPLATE} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
                             cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./
-                            rm ${OUTDIR}/${TEMPLATE}_fish1.tar.gz
+                            tar xf ${TEMPLATE}_fish1.tar.gz ./prepackage.dell
+                            rm -rf ${OUTDIR}
                         '''
                     }
                     post {
                         success {
-                            archiveArtifacts artifacts: '${env.TEMPLATE}_fish1.tar.gz'
+                            archiveArtifacts artifacts: '*_fish1.tar.gz'
+                            archiveArtifacts artifacts: 'prepackage.dell'
                         }
-                    }
-                }
-                stage('beaver-osp1') {
-                    agent {
-                        label 'docker'
-                    }
-                    environment {
-                        OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="master"
-                    }
-                    steps {
-                        sh '''
-                            mkdir -p ${OUTDIR}
-                            eval ${RUN_DOCKER_TAIPEI_BOT} \"pack-fish --base beaver-osp1 --template ${TEMPLATE} --deb \\"${TARGET_DEB}\\" --outdir ${OUTDIR}\"
-                            cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./
-                            rm ${OUTDIR}/${TEMPLATE}_fish1.tar.gz
-                        '''
-                    }
-                    post {
-                        success {
-                            archiveArtifacts artifacts: '${env.TEMPLATE}_fish1.tar.gz'
-                        }
-                    }
-                }
-                stage('oem-taipei-bot-2') {
-                    agent {
-                        label 'docker'
-                    }
-                    steps {
-                            sh '''
-                                sh 'docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot \"fish-fix help\"'
-                            '''
                     }
                 }
             }
