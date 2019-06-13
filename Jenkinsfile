@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
         RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
-        TARGET_DEB = "plymouth upower network-manager thermald modemmanager dkms"
+        TARGET_DEB = "--deb plymouth --deb upower --deb network-manager --deb thermald --deb modemmanager --deb dkms"
     }
     stages {
         stage('prepare') {
@@ -42,7 +42,7 @@ pipeline {
                     steps {
                         script {
                                 sh 'env'
-                                sh 'eval ${RUN_DOCKER_TAIPEI_BOT} \"fish-fix help\"'
+                                sh 'eval ${RUN_DOCKER_TAIPEI_BOT} \"${TARGET_DEB}\"'
                         }
                     }
                 }
