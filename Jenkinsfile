@@ -40,7 +40,7 @@ pipeline {
                         TEMPLATE="master"
                     }
                     steps {
-                        bash '''
+                        sh '''#!/bin/bash
                             mkdir -p ${OUTDIR}
                             mkdir -p artifacts
                             rm -rf ${OUTDIR}/*
@@ -52,7 +52,7 @@ pipeline {
                     }
                     post {
                         success {
-                            archiveArtifacts artifacts: 'artifacts/*'
+                            archiveArtifacts artifacts: 'artifacts/*', fingerprint: true
                         }
                     }
                 }
@@ -77,7 +77,7 @@ pipeline {
                     }
                     post {
                         success {
-                            archiveArtifacts artifacts: 'artifacts/*'
+                            archiveArtifacts artifacts: 'artifacts/*', fingerprint: true
                         }
                     }
                 }
