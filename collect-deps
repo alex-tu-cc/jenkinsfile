@@ -67,7 +67,9 @@ for target_ppa in $PPA;do
 done
 if [ -n "$DEB" ];then
 	apt-get update
-	apt-get install --no-install-recommends -y $DEB
+	for i in $DEB;do
+		apt-get install --no-install-recommends -y $i
+	done
 fi
 if [ -n "$CMD" ];then
 	apt-get update
