@@ -45,6 +45,7 @@ pipeline {
                             set -e
                             mkdir -p ${OUTDIR}
                             mkdir -p artifacts
+                            rm -rf artifacts/*
                             eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base beaver-osp1 --template ${TEMPLATE} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
                             cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
                             tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
@@ -71,6 +72,7 @@ pipeline {
                             set -e
                             mkdir -p ${OUTDIR}
                             mkdir -p artifacts
+                            rm -rf artifacts/*
                             eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base bionic-base --template ${TEMPLATE} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
                             cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
                             tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
