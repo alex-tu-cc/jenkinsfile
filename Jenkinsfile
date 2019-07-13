@@ -41,14 +41,14 @@ pipeline {
                     }
                     steps {
                         sh '''#!/bin/bash
-                            set -e
+                            set -ex
                             mkdir -p ${OUTDIR}
                             mkdir -p artifacts
                             rm -rf artifacts/*
-                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"source /srv/credential/set-env && \
-                                ${git_cmd} && \
-                                cd dockers-for-somerville && \
-                                bats tests/tests.bats && \
+                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"source /srv/credential/set-env \&\& \
+                                ${git_cmd} \&\& \
+                                cd dockers-for-somerville \&\& \
+                                bats tests/tests.bats \&\& \
                                 bats tests/test_push.bats \\"
                         '''
                     }
