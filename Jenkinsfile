@@ -45,7 +45,7 @@ pipeline {
                             mkdir -p ${OUTDIR}
                             mkdir -p artifacts
                             rm -rf artifacts/*
-                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"source /srv/credential/set-env \\&\\& \
+                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"ls /srv/credential/ \\&\\& source /srv/credential/set-env \\&\\& \
                                 ${git_cmd} \\&\\& \
                                 cd dockers-for-somerville \\&\\& \
                                 bats tests/tests.bats \\&\\& \
