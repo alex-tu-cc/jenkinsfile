@@ -1,4 +1,3 @@
-
 pipeline {
     agent none
     environment {
@@ -16,6 +15,8 @@ pipeline {
                     try {
                         sh 'docker ps | grep docker-volumes'
                         sh 'rm -rf artifacts/*'
+                        sh 'mkdir -p latest_build/*'
+                        sh 'rm -rf latest_build/*'
                     } catch (e) {
                         sh 'echo error!'
                     }
@@ -41,8 +42,12 @@ pipeline {
                         TEMPLATE="master"
                     }
                     steps {
+                        copyArtifacts(
+                        projectName: 'pack-fish-updatepkgs-test',
+                        filter: "artifacts/*.dell",
+                        target: 'latest_build');
                         sh '''#!/bin/bash
-                            set -e
+                            set -xe
                             mkdir -p ${OUTDIR}
                             mkdir -p artifacts
                             rm -rf artifacts/*
@@ -50,8 +55,18 @@ pipeline {
                             cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
                             tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
                             mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
+                            find .
+                            [ \"$(find artifacts latest_build -name ${GIT_BRANCH##origin/}-${STAGE_NAME}-*dell | xargs md5sum |cut -d ' ' -f1 | uniq | wc -l)\" == "1" ] && touch artifacts/no_update
                             rm -rf ${OUTDIR}
                         '''
+                        script {
+                            try {
+                                sh '[ -e artifacts/no_update ] && exit 1'
+                            } catch(exc) {
+                                echo "No new packages, set this build to unstable"
+                                currentBuild.result = 'UNSTABLE'
+                            }
+                        }
                     }
                     post {
                         success {
@@ -68,6 +83,10 @@ pipeline {
                         TEMPLATE="master"
                     }
                     steps {
+                        copyArtifacts(
+                        projectName: 'pack-fish-updatepkgs-test',
+                        filter: "artifacts/*.dell",
+                        target: 'latest_build');
                         sh '''#!/bin/bash
                             set -e
                             mkdir -p ${OUTDIR}
@@ -77,8 +96,18 @@ pipeline {
                             cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
                             tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
                             mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
+                            find .
+                            [ \"$(find artifacts latest_build -name ${GIT_BRANCH##origin/}-${STAGE_NAME}-*dell | xargs md5sum |cut -d ' ' -f1 | uniq | wc -l)\" == "1" ] && touch artifacts/no_update
                             rm -rf ${OUTDIR}
                         '''
+                        script {
+                            try {
+                                sh '[ -e artifacts/no_update ] && exit 1'
+                            } catch(exc) {
+                                echo "No new packages, set this build to unstable"
+                                currentBuild.result = 'UNSTABLE'
+                            }
+                        }
                     }
                     post {
                         success {
