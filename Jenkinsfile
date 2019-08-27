@@ -59,33 +59,6 @@ pipeline {
                         }
                     }
                 }
-                stage('beaver-osp1') {
-                    agent {
-                        label 'docker'
-                    }
-                    environment {
-                        OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="master"
-                    }
-                    steps {
-                        sh '''#!/bin/bash
-                            set -e
-                            mkdir -p ${OUTDIR}
-                            mkdir -p artifacts
-                            rm -rf artifacts/*
-                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base bionic-base --template ${TEMPLATE} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
-                            cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
-                            tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
-                            mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
-                            rm -rf ${OUTDIR}
-                        '''
-                    }
-                    post {
-                        success {
-                            archiveArtifacts artifacts: 'artifacts/*', fingerprint: true
-                        }
-                    }
-                }
             }
         }
     }
