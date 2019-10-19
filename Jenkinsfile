@@ -114,6 +114,29 @@ pipeline {
                 }
             }
         }
+
+        stage('fish-fix') {
+            agent {
+                label 'docker'
+            }
+            steps {
+                copyArtifacts(
+                projectName: "${JOB_NAME}",
+                filter: "artifacts/*.tar.gz",
+                target: "${BUILD_NUMBER}");
+                script {
+                    try {
+                        sh '''#!/bin/bash
+                            set -ex
+                            ls artifacts
+                        '''
+                    } catch (e) {
+                        sh 'echo error!'
+                    }
+                }
+            }
+        }
+
     }
 }
 
