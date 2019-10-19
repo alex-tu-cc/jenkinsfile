@@ -115,8 +115,8 @@ pipeline {
                                     exit $ret
                                     ''')
                                 echo "status = " + status
-                                if ( status == 1 ) {currentBuild.result = 'FAILURE'}
-                                if ( status == 2 ) {currentBuild.result = 'UNSTABLE'}
+                                if ( status == 1 ) {currentBuild.result = 'FAILURE'; echo "set FAILUER"}
+                                if ( status == 2 ) {currentBuild.result = 'UNSTABLE'; echo "set UNSTABLE"}
                             } catch(e) {
                                 echo "exception = " + e
                                 currentBuild.result = 'FAILURE'
