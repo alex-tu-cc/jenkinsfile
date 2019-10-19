@@ -151,11 +151,39 @@ pipeline {
                             find latest_build
                             fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep bionic-base)"
                             echo fish-fix $fish_tarball
-                            #eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base ${STAGE_NAME} --template ${TEMPLATE} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
-                            #fish-fix --nodep -f pack-fish.updatepkgs-bionic-base-20190919_fish1.tar.gz  -c misc 1838518
+                            docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
+                            docker cp $fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
+                            docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-fix --nodep -f $fish_tarball -c misc 1698071"
+                            docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
+                            docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                        '''
                    } catch (e) {
-                       sh 'echo error!'
+                       error("exception:" + e)
+                   }
+                }
+            }
+        }
+
+        stage('fish-manifest') {
+            agent {
+                label 'docker'
+            }
+            steps {
+               script {
+                   try {
+                       sh '''#!/bin/bash
+                            set -ex
+                            find latest_build
+                            fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep bionic-base)"
+                            echo fish-fix $fish_tarball
+                            docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
+                            docker cp $fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
+                            docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-fix --nodep -f $fish_tarball -c misc 1698071"
+                            docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
+                            docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
+                       '''
+                   } catch (e) {
+                       error("exception:" + e)
                    }
                 }
             }
