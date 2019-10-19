@@ -40,11 +40,17 @@ pipeline {
                         TEMPLATE="master"
                     }
                     steps {
-                        copyArtifacts(
-                        projectName: 'pack-fish-updatepkgs-test',
-                        filter: "artifacts/*.dell",
-                        target: 'latest_build',
-                        selector: lastSuccessful());
+                        script {
+                            try {
+                                copyArtifacts(
+                                projectName: 'pack-fish-updatepkgs-test',
+                                filter: "artifacts/*.dell",
+                                target: 'latest_build',
+                                selector: lastSuccessful());
+                            } catch(e) {
+                                echo "No lastSuccessful"
+                            }
+                        }
                         sh '''#!/bin/bash
                             set -xe
                             mkdir -p ${OUTDIR}
