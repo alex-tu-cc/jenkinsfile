@@ -43,7 +43,8 @@ pipeline {
                         copyArtifacts(
                         projectName: 'pack-fish-updatepkgs-test',
                         filter: "artifacts/*.dell",
-                        target: 'latest_build');
+                        target: 'latest_build',
+                        selector: lastSuccessful());
                         sh '''#!/bin/bash
                             set -xe
                             mkdir -p ${OUTDIR}
@@ -84,7 +85,7 @@ pipeline {
                         projectName: 'pack-fish-updatepkgs-test',
                         filter: "artifacts/*.dell",
                         target: 'latest_build',
-                        selector: lastSuccessful);
+                        selector: lastSuccessful());
                         sh '''#!/bin/bash
                             set -e
                             mkdir -p ${OUTDIR}
@@ -125,7 +126,7 @@ pipeline {
                 projectName: "${JOB_NAME}",
                 filter: "artifacts/*.tar.gz",
                 target: 'latest_build',
-                selector: lastSuccessful);
+                selector: specific("${BUILD_NUMBER}"));
                 script {
                     try {
                         sh '''#!/bin/bash
