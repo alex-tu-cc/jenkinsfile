@@ -48,7 +48,7 @@ pipeline {
                                 target: 'latest_build',
                                 selector: lastSuccessful());
                             } catch(e) {
-                                echo "No lastSuccessful"
+                                echo "No lastSuccessful build, let treat this build as 1st build"
                             }
                         }
                         sh '''#!/bin/bash
@@ -65,7 +65,7 @@ pipeline {
                         '''
                         script {
                             try {
-                                sh '[ -e artifacts/no_update ] && exit 1'
+                                sh 'ls artifacts/no_update'
                             } catch(exc) {
                                 echo "No new packages, set this build to unstable"
                                 currentBuild.result = 'UNSTABLE'
@@ -87,11 +87,17 @@ pipeline {
                         TEMPLATE="master"
                     }
                     steps {
-                        copyArtifacts(
-                        projectName: 'pack-fish-updatepkgs-test',
-                        filter: "artifacts/*.dell",
-                        target: 'latest_build',
-                        selector: lastSuccessful());
+                        script {
+                            try {
+                                copyArtifacts(
+                                projectName: 'pack-fish-updatepkgs-test',
+                                filter: "artifacts/*.dell",
+                                target: 'latest_build',
+                                selector: lastSuccessful());
+                            } catch(e) {
+                                echo "No lastSuccessful build, let treat this build as 1st build"
+                            }
+                        }
                         sh '''#!/bin/bash
                             set -e
                             mkdir -p ${OUTDIR}
@@ -107,7 +113,7 @@ pipeline {
                         '''
                         script {
                             try {
-                                sh '[ -e artifacts/no_update ] && exit 1'
+                                sh 'ls artifacts/no_update'
                             } catch(exc) {
                                 echo "No new packages, set this build to unstable"
                                 currentBuild.result = 'UNSTABLE'
