@@ -66,11 +66,10 @@ pipeline {
                                     exit $ret
                                     ''')
                                 echo "status = " + status
-                                if ( status == '1' ) {currentBuild.result = 'FAILURE'}
-                                if ( status == '2' ) {currentBuild.result = 'UNSTABLE'}
+                                if ( status == 1 ) {throw new Exception("packing fish failed somewhere!")}
+                                if ( status == 2 ) {unstable('no new package need to be updated'); echo "set UNSTABLE"}
                             } catch(e) {
                                 echo "exception = " + e
-                                currentBuild.result = 'FAILURE'
                             }
                         }
                     }
@@ -115,11 +114,10 @@ pipeline {
                                     exit $ret
                                     ''')
                                 echo "status = " + status
-                                if ( status == 1 ) {currentBuild.result = 'FAILURE'; echo "set FAILUER"}
-                                if ( status == 2 ) {currentBuild.result = 'UNSTABLE'; echo "set UNSTABLE"}
+                                if ( status == 1 ) {throw new Exception("packing fish failed somewhere!")}
+                                if ( status == 2 ) {unstable('no new package need to be updated'); echo "set UNSTABLE"}
                             } catch(e) {
                                 echo "exception = " + e
-                                currentBuild.result = 'FAILURE'
                             }
                         }
                     }
@@ -147,6 +145,7 @@ pipeline {
                    } catch(e) {
                        echo "No lastSuccessful build, we should be be here!"
                        currentBuild.result = 'FAILURE'
+                       continuePipeline = false
                    }
                    try {
                        sh '''#!/bin/bash
