@@ -51,23 +51,26 @@ pipeline {
                                 echo "No lastSuccessful build, let treat this build as 1st build"
                             }
                             try {
-                                sh '''#!/bin/bash
+                                status = sh(returnStatus: true,
+                                    script: '''#!/bin/bash
                                     set -xe
                                     mkdir -p ${OUTDIR}
                                     mkdir -p artifacts
                                     rm -rf artifacts/*
-                                    eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base bionic-base --template ${TEMPLATE} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
+                                    eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base ${STAGE_NAME} --template ${TEMPLATE} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
                                     cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
                                     tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
                                     mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
-                                    echo $(find artifacts latest_build -name ${GIT_BRANCH##origin/}-${STAGE_NAME}-*dell | xargs md5sum)
                                     [ \"$(find artifacts latest_build -name ${GIT_BRANCH##origin/}-${STAGE_NAME}-*dell | xargs md5sum |cut -d ' ' -f1 | uniq | wc -l)\" == "1" ] && ret=2
                                     rm -rf ${OUTDIR} latest_build
                                     exit $ret
-                                '''
+                                    ''')
+                                echo "status = " + status
+                                if ( status == '1' ) {currentBuild.result = 'FAILURE'}
+                                if ( status == '2' ) {currentBuild.result = 'UNSTABLE'}
                             } catch(e) {
-                                echo "return = " + e
-                                currentBuild.result = 'UNSTABLE'
+                                echo "exception = " + e
+                                currentBuild.result = 'FAILURE'
                             }
                         }
                     }
@@ -112,9 +115,11 @@ pipeline {
                                     exit $ret
                                     ''')
                                 echo "status = " + status
+                                if ( status == 1 ) {currentBuild.result = 'FAILURE'}
+                                if ( status == 2 ) {currentBuild.result = 'UNSTABLE'}
                             } catch(e) {
-                                echo "return = " + e
-                                currentBuild.result = 'UNSTABLE'
+                                echo "exception = " + e
+                                currentBuild.result = 'FAILURE'
                             }
                         }
                     }
