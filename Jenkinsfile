@@ -143,9 +143,7 @@ pipeline {
                        target: 'latest_build',
                        selector: specific("${BUILD_NUMBER}"));
                    } catch(e) {
-                       echo "No lastSuccessful build, we should be be here!"
-                       currentBuild.result = 'FAILURE'
-                       continuePipeline = false
+                       error("No lastSuccessful build, we should be be here!")
                    }
                    try {
                        sh '''#!/bin/bash
