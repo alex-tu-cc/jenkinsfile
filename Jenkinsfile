@@ -137,20 +137,25 @@ pipeline {
                 label 'docker'
             }
             steps {
-                copyArtifacts(
-                projectName: "${JOB_NAME}",
-                filter: "artifacts/*.tar.gz",
-                target: 'latest_build',
-                selector: specific("${BUILD_NUMBER}"));
-                script {
-                    try {
-                        sh '''#!/bin/bash
-                            set -ex
-                            ls artifacts
-                        '''
-                    } catch (e) {
-                        sh 'echo error!'
-                    }
+               script {
+                   try {
+                       copyArtifacts(
+                       projectName: "${JOB_NAME}",
+                       filter: "artifacts/*.tar.gz",
+                       target: 'latest_build',
+                       selector: specific("${BUILD_NUMBER}"));
+                   } catch(e) {
+                       echo "No lastSuccessful build, we should be be here!"
+                       currentBuild.result = 'FAILURE'
+                   }
+                   try {
+                       sh '''#!/bin/bash
+                           set -ex
+                           ls artifacts
+                       '''
+                   } catch (e) {
+                       sh 'echo error!'
+                   }
                 }
             }
         }
