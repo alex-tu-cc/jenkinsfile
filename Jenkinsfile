@@ -147,9 +147,12 @@ pipeline {
                    }
                    try {
                        sh '''#!/bin/bash
-                           set -ex
-                           ls artifacts
-                            echo fish-fix --nodep -f kernel-4.15.0-1057-oem-bionic_fish1.tar.gz -c misc 1809
+                            set -ex
+                            find latest_build
+                            fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep bionic-base)"
+                            echo fish-fix $fish_tarball
+                            #eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base ${STAGE_NAME} --template ${TEMPLATE} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
+                            #fish-fix --nodep -f pack-fish.updatepkgs-bionic-base-20190919_fish1.tar.gz  -c misc 1838518
                        '''
                    } catch (e) {
                        sh 'echo error!'
