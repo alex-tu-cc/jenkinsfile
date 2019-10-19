@@ -3,7 +3,6 @@ pipeline {
     environment {
         DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
         RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
-        TARGET_DEB = "plymouth upower network-manager thermald modemmanager dkms"
     }
     stages {
         stage('prepare') {
@@ -153,7 +152,7 @@ pipeline {
                             echo fish-fix $fish_tarball
                             docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
                             docker cp $fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
-                            docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-fix --nodep -f $fish_tarball -c misc 1698071"
+                            docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $fish_tarball -c misc 1698071"
                             docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                             docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                        '''
@@ -178,8 +177,8 @@ pipeline {
                             echo fish-fix $fish_tarball
                             docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
                             docker cp $fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
-                            docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-fix --nodep -f $fish_tarball -c misc 1698071"
-                            docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
+                            docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u 1838518"
+                            docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u 1838518"
                             docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                        '''
                    } catch (e) {
