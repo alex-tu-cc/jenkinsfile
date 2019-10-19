@@ -97,7 +97,8 @@ pipeline {
                                 echo "No lastSuccessful build, let treat this build as 1st build"
                             }
                             try {
-                                sh '''#!/bin/bash
+                                status = sh(returnStatus: true,
+                                    script: '''#!/bin/bash
                                     set -xe
                                     mkdir -p ${OUTDIR}
                                     mkdir -p artifacts
@@ -109,7 +110,8 @@ pipeline {
                                     [ \"$(find artifacts latest_build -name ${GIT_BRANCH##origin/}-${STAGE_NAME}-*dell | xargs md5sum |cut -d ' ' -f1 | uniq | wc -l)\" == "1" ] && ret=2
                                     rm -rf ${OUTDIR} latest_build
                                     exit $ret
-                                '''
+                                    ''')
+                                echo "status = " + status
                             } catch(e) {
                                 echo "return = " + e
                                 currentBuild.result = 'UNSTABLE'
