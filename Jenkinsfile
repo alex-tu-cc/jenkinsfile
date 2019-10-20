@@ -71,7 +71,7 @@ pipeline {
             }
         }
 
-        stage('fish-fix and manifest') {
+        stage('fish-fix-manifest') {
             agent {
                 label 'docker'
             }
