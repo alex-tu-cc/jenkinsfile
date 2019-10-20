@@ -40,17 +40,7 @@ pipeline {
                         TEMPLATE="gfx-stack"
                     }
                     steps {
-                        sh '''#!/bin/bash
-                            set -ex
-                            mkdir -p ${OUTDIR}
-                            mkdir -p artifacts
-                            rm -rf artifacts/*
-                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base beaver-osp1 --template ${TEMPLATE} --outdir ${OUTDIR}\\"
-                            cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
-                            tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
-                            mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
-                            rm -rf ${OUTDIR}
-                        '''
+                        pack_fish()
                     }
                     post {
                         success {
@@ -67,17 +57,7 @@ pipeline {
                         TEMPLATE="gfx-stack"
                     }
                     steps {
-                        sh '''#!/bin/bash
-                            set -ex
-                            mkdir -p ${OUTDIR}
-                            mkdir -p artifacts
-                            rm -rf artifacts/*
-                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base bionic-base --template ${TEMPLATE} --outdir ${OUTDIR}\\"
-                            cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
-                            tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
-                            mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
-                            rm -rf ${OUTDIR}
-                        '''
+                        pack_fish()
                     }
                     post {
                         success {
@@ -90,3 +70,16 @@ pipeline {
     }
 }
 
+def pack_fish() {
+                        sh '''#!/bin/bash
+                            set -ex
+                            mkdir -p ${OUTDIR}
+                            mkdir -p artifacts
+                            rm -rf artifacts/*
+                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base ${STAGE_NAME} --template ${TEMPLATE} --outdir ${OUTDIR}\\"
+                            cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
+                            tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
+                            mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
+                            rm -rf ${OUTDIR}
+                        '''
+}
