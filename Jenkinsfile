@@ -143,6 +143,8 @@ def fish_fix() {
                             docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
                             docker cp $fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
                             target_fish=$(basename $fish_tarball)
+                            # a workaround to wait credential is ready and FishInitFile is there
+                            sleep 15
                             docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
                             docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $target_fish -c misc $LP_NUM"
                             docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
@@ -166,7 +168,8 @@ def fish_manifest() {
                             fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep bionic-base)"
                             echo fish-fix $fish_tarball
                             docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
-                            docker cp $fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
+                            # a workaround to wait credential is ready
+                            sleep 15
                             docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u $LP_NUM"
                             docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u $LP_NUM"
                             docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
