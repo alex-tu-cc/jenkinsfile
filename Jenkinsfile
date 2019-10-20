@@ -70,7 +70,7 @@ pipeline {
             }
         }
 
-        stage('fish-fix') {
+        stage('fish-fix and manifest') {
             agent {
                 label 'docker'
             }
@@ -78,13 +78,6 @@ pipeline {
                 fish_fix();
             }
         }
-
-        stage('fish-manifest') {
-            steps {
-                fish_manifest();
-            }
-        }
-
     }
 }
 
@@ -145,33 +138,14 @@ def fish_fix() {
                             target_fish=$(basename $fish_tarball)
                             # a workaround to wait credential is ready and FishInitFile is there
                             sleep 15
+                            # host tarball on lp ticket
                             docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
                             docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $target_fish -c misc $LP_NUM"
-                            docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
-                            docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
-                            echo "=========================================================="
-                            echo "${STAGE_NAME} fished"
-                            echo "=========================================================="
-                       '''
-                   } catch (e) {
-                       error("exception:" + e)
-                   }
-                }
-}
 
-def fish_manifest() {
-               script {
-                   try {
-                       sh '''#!/bin/bash
-                            set -ex
-                            find latest_build
-                            fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep bionic-base)"
-                            echo fish-fix $fish_tarball
-                            docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
-                            # a workaround to wait credential is ready
-                            sleep 15
+                            # land the fish to staging manifest
                             docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u $LP_NUM"
                             docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u $LP_NUM"
+
                             docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                             docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                        '''
