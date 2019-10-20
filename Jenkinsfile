@@ -1,17 +1,16 @@
 pipeline {
-        agent {
-           label 'docker'
-        }
+    agent none
     environment {
         DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
         RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
         TARGET_DEB = "plymouth upower network-manager thermald modemmanager dkms"
         LP_NUM = "1838518"
-        OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-        TEMPLATE="master"
     }
     stages {
         stage('prepare') {
+            agent {
+                label 'docker'
+            }
             steps {
                 script {
                     try {
@@ -26,13 +25,25 @@ pipeline {
         stage('parallel') {
             parallel {
                 stage('oem-taipei-bot-0') {
+                    agent {
+                       label 'docker'
+                    }
                     steps {
+                        test_fun();
                         pack_fish();
                         sh 'cat /etc/*-release'
                     }
                 }
                 stage('bionic-base') {
+                    agent {
+                        label 'docker'
+                    }
+                    environment {
+                        OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
+                        TEMPLATE="master"
+                    }
                     steps {
+                        test_fun();
                         pack_fish();
                     }
                     post {
@@ -42,7 +53,15 @@ pipeline {
                     }
                 }
                 stage('beaver-osp1') {
+                    agent {
+                        label 'docker'
+                    }
+                    environment {
+                        OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
+                        TEMPLATE="master"
+                    }
                     steps {
+                        test_fun();
                         pack_fish();
                     }
                     post {
@@ -55,6 +74,9 @@ pipeline {
         }
 
         stage('fish-fix') {
+            agent {
+                label 'docker'
+            }
             steps {
                script {
                    try {
@@ -91,6 +113,9 @@ pipeline {
         }
 
         stage('fish-manifest') {
+            agent {
+                label 'docker'
+            }
             steps {
                script {
                    try {
