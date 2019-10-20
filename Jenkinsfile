@@ -13,26 +13,12 @@ pipeline {
             }
             steps {
                 script {
-                    try {
-                        sh 'docker ps | grep docker-volumes'
-                        sh 'rm -rf artifacts/*'
-                    } catch (e) {
-                        sh 'echo error!'
-                    }
+                    deleteDir()
                 }
             }
         }
         stage('parallel') {
             parallel {
-                stage('oem-taipei-bot-0') {
-                    agent {
-                       label 'docker'
-                    }
-                    steps {
-                        pack_fish();
-                        sh 'cat /etc/*-release'
-                    }
-                }
                 stage('bionic-base') {
                     agent {
                         label 'docker'
@@ -47,6 +33,7 @@ pipeline {
                     post {
                         success {
                             archiveArtifacts artifacts: 'artifacts/*', fingerprint: true
+                            echo "[${STAGE_NAME}] success and pushing artifacts"
                         }
                     }
                 }
@@ -64,6 +51,7 @@ pipeline {
                     post {
                         success {
                             archiveArtifacts artifacts: 'artifacts/*', fingerprint: true
+                            echo "[${STAGE_NAME}] success and pushing artifacts"
                         }
                     }
                 }
@@ -85,6 +73,7 @@ pipeline {
 
 def pack_fish() {
     script {
+        sh "mkdir -p artifacts"
         try {
             copyArtifacts(
             projectName: "${JOB_NAME}",
@@ -99,13 +88,11 @@ def pack_fish() {
                 script: '''#!/bin/bash
                 set -xe
                 mkdir -p ${OUTDIR}
-                mkdir -p artifacts
-                rm -rf artifacts/*
                 eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base ${STAGE_NAME} --template ${TEMPLATE} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
                 cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
                 tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
                 mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
-                [ \"$(find artifacts latest_build -name ${GIT_BRANCH##origin/}-${STAGE_NAME}-*dell | xargs md5sum |cut -d ' ' -f1 | uniq | wc -l)\" == "1" ] && ret=2
+                [ -d latest_build ] && [ \"$(find artifacts latest_build -name ${GIT_BRANCH##origin/}-${STAGE_NAME}-*dell | xargs md5sum |cut -d ' ' -f1 | uniq | wc -l)\" == "1" ] && ret=2
                 rm -rf ${OUTDIR} latest_build
                 exit $ret
                 ''')
@@ -114,6 +101,7 @@ def pack_fish() {
             if ( status == 2 ) {unstable('no new package need to be updated'); echo "set UNSTABLE"}
         } catch(e) {
             echo "exception = " + e
+            currentBuild.result = 'FAILURE'
         }
     }
 }
