@@ -4,8 +4,8 @@ pipeline {
     environment {
         DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
         RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
-        LP_BIONIC_BASE="1698071"
-        LP_BEAVER_OSP1="1698071"
+        LP_BIONIC_BASE="1838724"
+        LP_BEAVER_OSP1="1838515"
     }
     stages {
         stage('prepare') {
