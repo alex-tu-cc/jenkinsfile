@@ -91,9 +91,51 @@ def pack_fish() {
             echo "status = " + status
             if ( status == 1 ) {throw new Exception("packing fish failed somewhere!")}
             if ( status == 2 ) {unstable('no new package need to be updated'); echo "set UNSTABLE"}
-        } cache(e) {
+        } catch(e) {
             echo "exception = " + e
             currentBuild.result = 'FAILURE'
+        }
+    }
+}
+def fish_fix_manifest() {
+    script {
+        try {
+            copyArtifacts(
+            projectName: "${JOB_NAME}",
+            filter: "artifacts/*.tar.gz",
+            target: 'latest_build',
+            selector: specific("${BUILD_NUMBER}"));
+        } catch(e) {
+            error("No lastSuccessful build, we should be be here!")
+        }
+        try {
+            sh '''#!/bin/bash
+                set -ex
+                find latest_build
+                bionic_base_fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep bionic-base)"
+                beaver_osp1_fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep beaver-osp1)"
+                echo fish-fix $fish_tarball
+                docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
+                docker cp $bionic_base_fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
+                docker cp $beaver_osp1_fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
+                bionic_base_target_fish=$(basename $bionic_base_fish_tarball)
+                beaver_osp1_target_fish=$(basename $beaver_osp1_fish_tarball)
+                # a workaround to wait credential is ready and FishInitFile is there
+                sleep 15
+                # host tarball on lp ticket
+                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
+                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $bionic_base_target_fish -c misc $LP_BIONIC_BASE"
+                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $beaver_osp1_target_fish -c misc $LP_BEAVER_OSP1"
+
+                # land the fish to staging manifest
+                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u $LP_BIONIC_BASE"
+                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u $LP_BEAVER_OSP1"
+
+                docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
+                docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
+            '''
+        } catch (e) {
+            error("exception:" + e)
         }
     }
 }
