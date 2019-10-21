@@ -58,6 +58,15 @@ pipeline {
                 }
             }
         }
+        stage('fish-fix-manifest') {
+            agent {
+                label 'docker'
+            }
+            steps {
+                fish_fix_manifest();
+            }
+        }
+
     }
 }
 
