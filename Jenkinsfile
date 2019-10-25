@@ -26,7 +26,7 @@ pipeline {
                     }
                     environment {
                         OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="upgrade"
+                        TEMPLATE="dist-upgrade"
                     }
                     steps {
                         pack_fish();
@@ -44,7 +44,7 @@ pipeline {
                     }
                     environment {
                         OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="upgrade"
+                        TEMPLATE="dist-upgrade"
                     }
                     steps {
                         pack_fish();
@@ -58,14 +58,14 @@ pipeline {
                 }
             }
         }
-        stage('fish-fix-manifest') {
-            agent {
-                label 'docker'
-            }
-            steps {
-                fish_fix_manifest();
-            }
-        }
+//        stage('fish-fix-manifest') {
+//            agent {
+//                label 'docker'
+//            }
+//            steps {
+//                fish_fix_manifest();
+//            }
+//        }
 
     }
 }
