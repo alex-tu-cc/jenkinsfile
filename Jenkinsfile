@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
         RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
-        TARGET_DEB = "plymouth upower network-manager thermald modemmanager dkms fwupd pulseaudio bolt libasound2-data"
+        TARGET_DEB = "plymouth upower network-manager thermald modemmanager dkms fwupd pulseaudio bolt libasound2-data mutter gnome-shell"
         LP_NUM = "1838518"
     }
     stages {
@@ -108,6 +108,7 @@ def pack_fish() {
 
 def fish_fix_manifest() {
     script {
+        sh "rm -rf latest_build/*"
         try {
             copyArtifacts(
             projectName: "${JOB_NAME}",
@@ -121,7 +122,7 @@ def fish_fix_manifest() {
             sh '''#!/bin/bash
                  set -ex
                  find latest_build
-                 fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep bionic-base)"
+                 fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep bionic-base --max-count=1)"
                  echo fish-fix $fish_tarball
                  docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
                  docker cp $fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
