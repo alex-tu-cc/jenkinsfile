@@ -26,7 +26,7 @@ pipeline {
                     }
                     environment {
                         OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="upgrade"
+                        TEMPLATE="upgrade-test"
                     }
                     steps {
                         pack_fish();
@@ -44,7 +44,7 @@ pipeline {
                     }
                     environment {
                         OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="upgrade"
+                        TEMPLATE="upgrade-test"
                     }
                     steps {
                         pack_fish();
