@@ -113,9 +113,9 @@ def fish_fix_manifest() {
                        projectName: "${JOB_NAME}",
                        filter: "artifacts/*.tar.gz",
                        target: 'latest_build',
-                       selector: specific("${BUILD_NUMBER}"));
+                       selector: lastSuccessful());
                    } catch(e) {
-                       error("No lastSuccessful build, we should be be here!")
+                       error("No lastSuccessful build, we should not be here!")
                    }
                    try {
                        sh '''#!/bin/bash
