@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
         RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
-        TARGET_DEB = "plymouth upower network-manager thermald modemmanager dkms fwupd pulseaudio bolt libasound2-data mutter gnome-shell"
+        TARGET_DEB = "plymouth upower network-manager thermald modemmanager dkms fwupd pulseaudio bolt libasound2-data mutter gnome-shell gnome-settings-daemon"
         LP_NUM = "1838518"
     }
     stages {
