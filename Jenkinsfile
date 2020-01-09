@@ -5,6 +5,7 @@ pipeline {
         RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
         TARGET_DEB = "plymouth upower network-manager thermald modemmanager dkms fwupd fwupd-signed pulseaudio bolt libasound2-data mutter gnome-shell gnome-settings-daemon"
         LP_NUM = "1838518"
+        RM_LP_NUM = "1854917"
     }
     stages {
         stage('prepare') {
@@ -135,7 +136,7 @@ def fish_fix_manifest() {
 
                  # land the fish to staging manifest
                  docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u $LP_NUM"
-                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u $LP_NUM"
+                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u $LP_NUM --delete $RM_LP_NUM"
 
                  docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                  docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
