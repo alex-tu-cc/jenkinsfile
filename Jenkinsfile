@@ -5,6 +5,7 @@ pipeline {
         DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
         RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
         LP_BIONIC_BASE="1838724"
+        LP_BIONIC_BASE_OLD="1859598"
         LP_BEAVER_OSP1="1838515"
         LP_BEAVER_OSP1_OLD="1854914"
     }
@@ -114,9 +115,9 @@ def fish_fix_manifest() {
                        projectName: "${JOB_NAME}",
                        filter: "artifacts/*.tar.gz",
                        target: 'latest_build',
-                       selector: lastSuccessful());
+                       selector: specific("${BUILD_NUMBER}"));
                    } catch(e) {
-                       error("No lastSuccessful build, we should not be here!")
+                       error("Not a successful build, skip fish-fix.")
                    }
                    try {
                        sh '''#!/bin/bash
@@ -138,7 +139,7 @@ def fish_fix_manifest() {
                             docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $beaver_osp1_target_fish -c misc $LP_BEAVER_OSP1"
 
                             # land the fish to staging manifest
-                            docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u $LP_BIONIC_BASE"
+                            docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u $LP_BIONIC_BASE --delete $LP_BIONIC_BASE_OLD"
                             docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u $LP_BEAVER_OSP1 --delete $LP_BEAVER_OSP1_OLD"
 
                             docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
