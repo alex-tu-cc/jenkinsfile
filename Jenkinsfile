@@ -9,6 +9,17 @@ pipeline {
                 label 'docker'
             }
             steps {
+                timeout(time: 20, unit: 'SECONDS') {
+                        script {
+                            // Show the select input modal
+                           def INPUT_PARAMS = input message: 'Please Provide Parameters', ok: 'Next',
+                                            parameters: [
+                                            choice(name: 'is_update_pkgs', choices: ['no','yes'].join('\n'), description: 'Do you want update secure and mesa pkgs for stagings')]
+
+                            env.is_update_pkgs = INPUT_PARAMS
+                            print env.is_update_pkgs
+                        }
+                }
                 script {
                     try {
                         sh 'docker ps | grep docker-volumes'
@@ -17,9 +28,11 @@ pipeline {
                         sh 'echo error!'
                     }
                 }
+
+
             }
         }
-        stage('parallel') {
+        stage('parallel-clean') {
             parallel {
                 stage('oem-taipei-bot-0') {
                     agent {
@@ -43,6 +56,27 @@ pipeline {
 
                         clean_manifest('alloem');
                         fish_manifest('beaver-osp1-alloem', 'beaver-osp1', '1861491', '1852059');
+                    }
+                }
+            }
+        }
+        stage('parallel-update-pkgs') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+
+            parallel {
+                stage('pack-fish-gfx') {
+                    steps {
+                        build("${STAGE_NAME}")
+                    }
+                }
+                stage('pack-fish-updatepkgs') {
+                    steps {
+                        build("${STAGE_NAME}")
+                    }
+                }
+                stage('pack-fish-updatepkgs') {
+                    steps {
+                        build("${STAGE_NAME}")
                     }
                 }
             }
