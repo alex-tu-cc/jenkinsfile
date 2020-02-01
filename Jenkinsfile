@@ -117,7 +117,7 @@ def fish_fix_manifest() {
             target: 'latest_build',
             selector: specific("${BUILD_NUMBER}"));
         } catch(e) {
-            error("No lastSuccessful build, we should be be here!")
+            echo "Not a successful build, skip fish-fix."
         }
         try {
             sh '''#!/bin/bash
