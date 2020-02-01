@@ -65,7 +65,7 @@ pipeline {
             }
             steps {
                script {
-                    fish_fix_manifest();
+                    fish_fix_manifest("${LP_NUM}", "${RM_LP_NUM}");
                 }
             }
         }
@@ -107,7 +107,10 @@ def pack_fish() {
     }
 }
 
-def fish_fix_manifest() {
+def fish_fix_manifest(String add_lp_num, String del_lp_num) {
+    env.add_lp_num="${add_lp_num}"
+    env.del_lp_num="${del_lp_num}"
+    env.new_pkgs="true"
     script {
         sh "rm -rf latest_build/*"
         try {
@@ -117,27 +120,36 @@ def fish_fix_manifest() {
             target: 'latest_build',
             selector: specific("${BUILD_NUMBER}"));
         } catch(e) {
-            echo "Not a successful build, skip fish-fix."
+            echo "Not successfully packed fish, but fish-fix and fish-manifest existed anyway."
+            // because we always reflash stagings then inject packages for test.
+            // so, even packages not be packed, we still need old one for test.
+            env.new_pkgs="false"
         }
         try {
             sh '''#!/bin/bash
                  set -ex
-                 find latest_build
-                 fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep bionic-base --max-count=1)"
-                 echo fish-fix $fish_tarball
                  docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
-                 docker cp $fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
-                 target_fish=$(basename $fish_tarball)
                  # a workaround to wait credential is ready and FishInitFile is there
                  sleep 15
                  # host tarball on lp ticket
-                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
-                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $target_fish -c misc $LP_NUM"
+                 if [ "${new_pkgs}" == "true" ]; then
+                     find latest_build
+                     fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep bionic-base --max-count=1)"
+                     echo fish-fix $fish_tarball
+                     docker cp $fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
+                     target_fish=$(basename $fish_tarball)
 
-                 # land the fish to staging manifest
-                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u $LP_NUM"
-                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u $LP_NUM --delete $RM_LP_NUM"
+                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
+                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $target_fish -c misc ${add_lp_num}"
 
+                     # land the fish to staging manifest
+                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u ${add_lp_num}"
+                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u ${add_lp_num} --delete ${del_lp_num}"
+                else
+                     # land the fish to staging manifest
+                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u ${add_lp_num}"
+                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u ${add_lp_num} --delete ${del_lp_num}"
+                fi
                  docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                  docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
             '''
