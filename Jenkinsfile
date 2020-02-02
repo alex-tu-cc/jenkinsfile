@@ -1,3 +1,4 @@
+@Library('somervillJenkinsLib') _
 
 pipeline {
     agent {
@@ -9,18 +10,23 @@ pipeline {
                 label 'docker'
             }
             steps {
-                timeout(time: 20, unit: 'SECONDS') {
-                        script {
-                            // Show the select input modal
-                           def INPUT_PARAMS = input message: 'Please Provide Parameters', ok: 'Next',
-                                            parameters: [
-                                            choice(name: 'is_update_pkgs', choices: ['no','yes'].join('\n'), description: 'Do you want update secure and mesa pkgs for stagings')]
-
-                            env.is_update_pkgs = INPUT_PARAMS
-                            print env.is_update_pkgs
-                        }
-                }
                 script {
+                    try {
+                        timeout(time: 20, unit: 'SECONDS') {
+                                script {
+                                    // Show the select input modal
+                                   def INPUT_PARAMS = input message: 'Please Provide Parameters', ok: 'Next',
+                                                    parameters: [
+                                                    choice(name: 'is_update_pkgs', choices: ['no','yes'].join('\n'), description: 'Do you want update secure and mesa pkgs for stagings')]
+
+                                    env.is_update_pkgs = INPUT_PARAMS
+                                    print env.is_update_pkgs
+                                }
+                        }
+                    } catch (e) {
+                        print "timeout: set default value = no"
+                        env.is_update_pkgs = 'no'
+                    }
                     try {
                         sh 'docker ps | grep docker-volumes'
                         sh 'rm -rf artifacts/*'
@@ -55,31 +61,28 @@ pipeline {
                         clean_manifest('staging');
 
                         clean_manifest('alloem');
-                        library 'somervillJenkinsLib'
                         fishManifest series:'bionic', target:'beaver-osp1-alloem', base:'beaver-osp1', update:'1861491', delete:'1852059'
                     }
                 }
             }
         }
-        stage('parallel-update-pkgs') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
 
-            parallel {
-                stage('pack-fish-gfx') {
-                    steps {
-                        build("${STAGE_NAME}")
-                    }
-                }
-                stage('pack-fish-updatepkgs') {
-                    steps {
-                        build("${STAGE_NAME}")
-                    }
-                }
-                stage('pack-fish-unattended') {
-                    steps {
-                        build("${STAGE_NAME}")
-                    }
-                }
+        stage('pack-fish-gfx') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+            steps {
+                build("${STAGE_NAME}")
+            }
+        }
+        stage('pack-fish-updatepkgs') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+            steps {
+                build("${STAGE_NAME}")
+            }
+        }
+        stage('pack-fish-unattended') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+            steps {
+                build("${STAGE_NAME}")
             }
         }
     }
@@ -88,7 +91,6 @@ pipeline {
 def clean_manifest(String b) {
     env.branch = "${b}"
     script {
-        library 'somervillJenkinsLib'
         env.DOCKER_REPO=globalVar.internalDockerRepo()
         env.DOCKER_VOL=globalVar.internalDockerVolum()
         try {
@@ -114,3 +116,4 @@ def clean_manifest(String b) {
         }
     }
 }
+
