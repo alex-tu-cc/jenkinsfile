@@ -59,7 +59,6 @@ pipeline {
                 stage('dell-bto-bionic-beaver-osp1') {
                     steps {
                         clean_manifest('staging');
-
                         clean_manifest('alloem');
                         fishManifest series:'bionic', target:'beaver-osp1-alloem', base:'beaver-osp1', update:'1861491', delete:'1852059'
                     }
@@ -69,21 +68,33 @@ pipeline {
 
         stage('pack-fish-gfx') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps {
-                build("${STAGE_NAME}")
-            }
+            steps { script {
+                try {
+                      build("${STAGE_NAME}")
+                } catch(e) {
+                    unstable ("${STAGE_NAME} failed but continue.")
+                }
+            } }
         }
         stage('pack-fish-updatepkgs') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps {
-                build("${STAGE_NAME}")
-            }
+            steps { script {
+                try {
+                      build("${STAGE_NAME}")
+                } catch(e) {
+                    unstable ("${STAGE_NAME} failed but continue.")
+                }
+            } }
         }
         stage('pack-fish-unattended') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps {
-                build("${STAGE_NAME}")
-            }
+            steps { script {
+                try {
+                      build("${STAGE_NAME}")
+                } catch(e) {
+                    unstable ("${STAGE_NAME} failed but continue.")
+                }
+            } }
         }
     }
 }
