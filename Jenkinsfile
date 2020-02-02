@@ -55,7 +55,8 @@ pipeline {
                         clean_manifest('staging');
 
                         clean_manifest('alloem');
-                        fish_manifest('beaver-osp1-alloem', 'beaver-osp1', '1861491', '1852059');
+                        library 'somervillJenkinsLib'
+                        fishManifest series:'bionic', target:'beaver-osp1-alloem', base:'beaver-osp1', update:'1861491', delete:'1852059'
                     }
                 }
             }
@@ -64,21 +65,21 @@ pipeline {
             when { environment name: 'is_update_pkgs', value: 'yes' }
 
             parallel {
-                stage('pack-fish-gfx') {
-                    steps {
-                        build("${STAGE_NAME}")
-                    }
-                }
+//                stage('pack-fish-gfx') {
+//                    steps {
+//                        build("${STAGE_NAME}")
+//                    }
+//                }
                 stage('pack-fish-updatepkgs') {
                     steps {
                         build("${STAGE_NAME}")
                     }
                 }
-                stage('pack-fish-updatepkgs') {
-                    steps {
-                        build("${STAGE_NAME}")
-                    }
-                }
+//                stage('pack-fish-unattended') {
+//                    steps {
+//                        build("${STAGE_NAME}")
+//                    }
+//                }
             }
         }
     }
@@ -87,11 +88,14 @@ pipeline {
 def clean_manifest(String b) {
     env.branch = "${b}"
     script {
+        library 'somervillJenkinsLib'
+        env.DOCKER_REPO=globalVar.internalDockerRepo()
+        env.DOCKER_VOL=globalVar.internalDockerVolum()
         try {
         sh '''#!/bin/bash
             set -ex
-            DOCKER_REPO="somerville-jenkins.cctu.space:5000"
-            RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot"
+            RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot \
+                                    --volumes-from ${DOCKER_VOL} ${DOCKER_REPO}/oem-taipei-bot"
 
             $RUN_DOCKER_TAIPEI_BOT " \
             bzr branch lp:~oem-solutions-engineers/bugsy-config/${STAGE_NAME}-${branch} && \
@@ -104,28 +108,6 @@ def clean_manifest(String b) {
             bzr commit -m \\"replaced by ${STAGE_NAME} bzr \\$VER\\" || true && bzr log | head && \
             bzr push :parent || echo "skip ${STAGE_NAME}-${branch}" \
             "
-        '''
-        } catch (e) {
-            error("exception:" + e)
-        }
-    }
-}
-
-def fish_manifest(String target, String series, String update,String delete ) {
-    env.target = "${target}"
-    env.series = "${series}"
-    env.update = "${update}"
-    env.delete = "${delete}"
-    script {
-        try {
-        sh '''#!/bin/bash
-            set -ex
-            DOCKER_REPO="somerville-jenkins.cctu.space:5000"
-            RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot"
-            command="fish-manifest -p somerville -r bionic -e -c --target ${target} ${series} --postRTS "
-            [ -n "${update}" ] && command="$command -u ${update}"
-            [ -n "${delete}" ] && command="$command --delete ${delete}"
-            echo $RUN_DOCKER_TAIPEI_BOT $command
         '''
         } catch (e) {
             error("exception:" + e)
