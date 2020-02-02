@@ -65,21 +65,21 @@ pipeline {
             when { environment name: 'is_update_pkgs', value: 'yes' }
 
             parallel {
-//                stage('pack-fish-gfx') {
-//                    steps {
-//                        build("${STAGE_NAME}")
-//                    }
-//                }
+                stage('pack-fish-gfx') {
+                    steps {
+                        build("${STAGE_NAME}")
+                    }
+                }
                 stage('pack-fish-updatepkgs') {
                     steps {
                         build("${STAGE_NAME}")
                     }
                 }
-//                stage('pack-fish-unattended') {
-//                    steps {
-//                        build("${STAGE_NAME}")
-//                    }
-//                }
+                stage('pack-fish-unattended') {
+                    steps {
+                        build("${STAGE_NAME}")
+                    }
+                }
             }
         }
     }
