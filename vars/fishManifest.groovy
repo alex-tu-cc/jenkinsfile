@@ -14,10 +14,10 @@ def call(Map config) {
             sh '''#!/bin/bash
                 set -ex
                 RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from ${DOCKER_VOL} ${DOCKER_REPO}/oem-taipei-bot"
-                command="fish-manifest -p ${project} -r ${series} -e -c --target ${target} ${base} --postRTS "
+                command="fish-manifest -b -p ${project} -r ${series} -e -c --target ${target} ${base} --postRTS "
                 [ -n "${update}" ] && command="$command -u ${update}"
                 [ -n "${delete}" ] && command="$command --delete ${delete}"
-                $RUN_DOCKER_TAIPEI_BOT $command
+                $RUN_DOCKER_TAIPEI_BOT "$command"
             '''
             } catch (e) {
                 error("exception:" + e)
