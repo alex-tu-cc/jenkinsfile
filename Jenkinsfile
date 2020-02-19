@@ -24,8 +24,8 @@ pipeline {
                                 }
                         }
                     } catch (e) {
-                        print "timeout: set default value = no"
-                        env.is_update_pkgs = 'no'
+                        print "timeout: set default value = yes"
+                        env.is_update_pkgs = 'yes'
                     }
                     try {
                         sh 'docker ps | grep docker-volumes'
