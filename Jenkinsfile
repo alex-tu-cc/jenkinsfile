@@ -65,7 +65,7 @@ set -x
 GIT_SSH_COMMAND=\"ssh -p 10022\" git clone git@office.cctu.space:alextu/internal-db.git
 git clone git+ssh://git.launchpad.net/~lyoncore-team/lyoncore/+git/solution-db
 export source=\"\\$(find solution-db -name \"cid_clabel_mapping.json\")\"
-cp \"\$source\" internal-db/cid_clabel_mapping.json
+cp \"\\$source\" internal-db/cid_clabel_mapping.json
 cd internal-db
 GIT_SSH_COMMAND=\"ssh -p 10022\" git push origin master
 EOF
