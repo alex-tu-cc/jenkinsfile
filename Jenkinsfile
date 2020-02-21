@@ -60,13 +60,13 @@ def reload_cid_map() {
                 sleep 15
                 # host tarball on lp ticket
 cat << EOF > do.sh
-    #!/bin/bash
-    set -x
-    GIT_SSH_COMMAND="ssh -p 10022" git clone git@office.cctu.space:alextu/internal-db.git
-    git clone git+ssh://git.launchpad.net/~lyoncore-team/lyoncore/+git/solution-db
-    export source="$(find solution-db -name "cid_clabel_mapping.json")" && cp $source internal-db/cid_clabel_mapping.json
-    cd internal-db
-    GIT_SSH_COMMAND="ssh -p 10022" git push origin master
+#!/bin/bash
+set -x
+GIT_SSH_COMMAND="ssh -p 10022" git clone git@office.cctu.space:alextu/internal-db.git
+git clone git+ssh://git.launchpad.net/~lyoncore-team/lyoncore/+git/solution-db
+export source="\$(find solution-db -name "cid_clabel_mapping.json")" && cp $source internal-db/cid_clabel_mapping.json
+cd internal-db
+GIT_SSH_COMMAND="ssh -p 10022" git push origin master
 EOF
                 docker cp $fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "bash -c ./do.sh"
