@@ -64,13 +64,14 @@ cat << EOF > do.sh
 set -x
 GIT_SSH_COMMAND=\"ssh -p 10022\" git clone git@office.cctu.space:alextu/internal-db.git
 git clone git+ssh://git.launchpad.net/~lyoncore-team/lyoncore/+git/solution-db
-export source=\"\\$(find solution-db -name \"cid_clabel_mapping.json\")\" && cp \$source internal-db/cid_clabel_mapping.json
+export source=\"\\$(find solution-db -name \"cid_clabel_mapping.json\")\"
+cp \"\$source\" internal-db/cid_clabel_mapping.json
 cd internal-db
 GIT_SSH_COMMAND=\"ssh -p 10022\" git push origin master
 EOF
                 docker cp do.sh oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls && cat ./do.sh"
-                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "./do.sh"
+                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "bash ./do.sh"
                 docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                 docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                 ''')
