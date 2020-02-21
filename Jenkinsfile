@@ -4,9 +4,9 @@ pipeline {
     environment {
         DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
         RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
-        LP_BIONIC_BASE="1838724"
+        LP_BIONIC_BASE="1864137"
         LP_BIONIC_BASE_OLD="1859598"
-        LP_BEAVER_OSP1="1838515"
+        LP_BEAVER_OSP1="1864138"
         LP_BEAVER_OSP1_OLD="1854914"
     }
     stages {
@@ -28,7 +28,7 @@ pipeline {
                     }
                     environment {
                         OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="gfx-stack"
+                        TEMPLATE="gfx-stack-proposed"
                     }
                     steps {
                         pack_fish()
@@ -46,7 +46,7 @@ pipeline {
                     }
                     environment {
                         OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="gfx-stack"
+                        TEMPLATE="gfx-stack-proposed"
                     }
                     steps {
                         pack_fish()
@@ -145,8 +145,8 @@ def fish_fix_manifest() {
                 fi
 
                 # land the fish to staging manifest
-                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u $LP_BIONIC_BASE --delete $LP_BIONIC_BASE_OLD"
-                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u $LP_BEAVER_OSP1 --delete $LP_BEAVER_OSP1_OLD"
+                #docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target bionic-master-staging  bionic-master --postRTS -u $LP_BIONIC_BASE --delete $LP_BIONIC_BASE_OLD"
+                #docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest -b -p somerville -r bionic -e -c --target beaver-osp1-staging  beaver-osp1 --postRTS -u $LP_BEAVER_OSP1 --delete $LP_BEAVER_OSP1_OLD"
 
                 docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                 docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
