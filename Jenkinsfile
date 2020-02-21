@@ -36,11 +36,10 @@ pipeline {
                         label 'docker'
                     }
                     steps {
-                        reload_cid_map();
+                        trigger("50","alextu","tesst");
                     }
                     post {
                         success {
-                            archiveArtifacts artifacts: 'artifacts/*', fingerprint: true
                             echo "[${STAGE_NAME}] success and pushing artifacts"
                         }
                     }
@@ -50,7 +49,7 @@ pipeline {
     }
 }
 
-def reload_cid_map() {
+def trigger(String server, String user, String job) {
     script {
         try {
             status = sh(returnStatus: true,
@@ -60,17 +59,16 @@ def reload_cid_map() {
                 # a workaround to wait credential is ready and FishInitFile is there
                 sleep 15
                 # host tarball on lp ticket
-                cat << EOF > do.sh
-                    #!/bin/bash
-                    set -x
-                    GIT_SSH_COMMAND="ssh -p 10022" git clone git@office.cctu.space:alextu/internal-db.git
-                    git clone git+ssh://git.launchpad.net/~lyoncore-team/lyoncore/+git/solution-db
-                    export source="$(find solution-db -name "cid_clabel_mapping.json")" && cp $source internal-db/cid_clabel_mapping.json
-                    cd internal-db
-                    GIT_SSH_COMMAND="ssh -p 10022" git push origin master
-                EOF
-                docker cp $fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
-                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "bash -c ./do.sh"
+cat << EOF > do.sh
+#!/bin/bash
+set -x
+GIT_SSH_COMMAND="ssh -p 10022" git clone git@office.cctu.space:alextu/internal-tools.git
+git -C internal-tools rev-parse HEAD
+bash internal-tools/trigger-jenkins-job.sh
+EOF
+                docker cp do.sh oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
+                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls && cat ./do.sh"
+                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "bash ./do.sh"
                 docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                 docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                 ''')
