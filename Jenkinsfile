@@ -28,7 +28,7 @@ pipeline {
                         sh "echo testing, ignore me"
                     }
                 }
-                stage('fosa') {
+                stage('fossa') {
                     agent {
                         label 'docker'
                     }
