@@ -114,7 +114,7 @@ def fish_fix_manifest() {
                 set -ex
                 docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
                 # a workaround to wait credential is ready and FishInitFile is there
-                while [ -z "$(docker exec -t oem-taipei-bot-jenkins-pack-fish-ubuntu-desktop-20-fish-fix-manifest ls | grep FishInitFile)" ]; do
+                while [ -z "$(docker exec -t oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} ls | grep FishInitFile)" ]; do
                     sleep 10
                 done
 
