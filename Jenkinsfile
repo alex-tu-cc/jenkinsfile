@@ -39,7 +39,6 @@ pipeline {
                     environment {
                         OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
                         TEMPLATE="checkbox-pkgs"
-                        TEMPLATE_REPO="git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-engineers/somerville/+git/fish-template"
                     }
                     steps {
                         sh '''#!/bin/bash
