@@ -47,7 +47,7 @@ pipeline {
                             mkdir -p ${OUTDIR}
                             mkdir -p artifacts
                             rm -rf artifacts/*
-                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"git clone git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools -b alext-test \\&\\& lp-fish-tools/bin/pack-fish.sh --base bionic-base --template ${TEMPLATE} --template-repo ${TEMPLATE_REPO} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
+                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"git clone git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools -b alext-test \\&\\& lp-fish-tools/bin/pack-fish.sh --base ${STAGE_NAME} --template ${TEMPLATE} --template-repo ${TEMPLATE_REPO} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
                             cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
                             tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
                             mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
