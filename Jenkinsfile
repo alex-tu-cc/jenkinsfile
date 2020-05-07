@@ -63,9 +63,24 @@ pipeline {
                         fishManifest series:'bionic', target:'beaver-osp1-alloem', base:'beaver-osp1', update:'1861491', delete:'1852059'
                     }
                 }
+                stage('dell-bto-focal-fossa') {
+                    steps {
+                        clean_manifest('staging');
+                    }
+                }
             }
         }
 
+        stage('pack-fish-ubuntu-desktop') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+            steps { script {
+                try {
+                      build("${STAGE_NAME}")
+                } catch(e) {
+                    unstable ("${STAGE_NAME} failed but continue.")
+                }
+            } }
+        }
         stage('pack-fish-gfx') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
             steps { script {
