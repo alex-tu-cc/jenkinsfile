@@ -66,6 +66,8 @@ pipeline {
                 stage('dell-bto-focal-fossa') {
                     steps {
                         clean_manifest('staging');
+                        clean_manifest('alloem');
+                        fishManifest series:'focal', target:'fossa-alloem', base:'fossa', update:'1888630', delete:'1862919'
                     }
                 }
             }
