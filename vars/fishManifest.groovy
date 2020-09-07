@@ -14,7 +14,11 @@ def call(Map config) {
             sh '''#!/bin/bash
                 set -ex
                 RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from ${DOCKER_VOL} ${DOCKER_REPO}/oem-taipei-bot"
-                command="fish-manifest -b -p ${project} -r ${series} -e -c --target ${target} ${base} --postRTS "
+                if [ "${series}" == "bionic" ]; then
+                    command="fish-manifest -b -p ${project} -r ${series} -e -c --target ${target} ${base} --postRTS "
+                else
+                    command="fish-manifest --git -b -p ${project} -r ${series} -e -c --target ${target} ${base} --postRTS "
+                fi
                 [ -n "${update}" ] && command="$command -u ${update}"
                 [ -n "${delete}" ] && command="$command --delete ${delete}"
                 $RUN_DOCKER_TAIPEI_BOT "$command"
