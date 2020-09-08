@@ -124,20 +124,33 @@ def clean_manifest(String b) {
         try {
         sh '''#!/bin/bash
             set -ex
-            RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot \
-                                    --volumes-from ${DOCKER_VOL} ${DOCKER_REPO}/oem-taipei-bot"
 
-            $RUN_DOCKER_TAIPEI_BOT " \
-            bzr branch lp:~oem-solutions-engineers/bugsy-config/${STAGE_NAME}-${branch} && \
-            VER=\\$(bzr branch lp:~oem-solutions-engineers/bugsy-config/${STAGE_NAME}  2>&1 | grep revisions | cut -d \\" \\" -f2) && \
-            echo \\$VER && \
-            yes| rm -rf ${STAGE_NAME}-${branch}/* && \
-            cp -rf ${STAGE_NAME}/* ${STAGE_NAME}-${branch}/ && \
-            cd ${STAGE_NAME}-$branch/ && \
-            bzr add . && \
-            bzr commit -m \\"replaced by ${STAGE_NAME} bzr \\$VER\\" || true && bzr log | head && \
-            bzr push :parent || echo "skip ${STAGE_NAME}-${branch}" \
-            "
+            if [ -z "${STAGE_NAME##*bionic*}" ]; then
+                RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot \
+                                        --volumes-from ${DOCKER_VOL} ${DOCKER_REPO}/oem-taipei-bot:bionic"
+    
+                $RUN_DOCKER_TAIPEI_BOT " \
+                bzr branch lp:~oem-solutions-engineers/bugsy-config/${STAGE_NAME}-${branch} && \
+                VER=\\$(bzr branch lp:~oem-solutions-engineers/bugsy-config/${STAGE_NAME}  2>&1 | grep revisions | cut -d \\" \\" -f2) && \
+                echo \\$VER && \
+                yes| rm -rf ${STAGE_NAME}-${branch}/* && \
+                cp -rf ${STAGE_NAME}/* ${STAGE_NAME}-${branch}/ && \
+                cd ${STAGE_NAME}-$branch/ && \
+                bzr add . && \
+                bzr commit -m \\"replaced by ${STAGE_NAME} bzr \\$VER\\" || true && bzr log | head && \
+                bzr push :parent || echo "skip ${STAGE_NAME}-${branch}" \
+                "
+            else
+                RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot \
+                                        --volumes-from ${DOCKER_VOL} ${DOCKER_REPO}/oem-taipei-bot"
+    
+                $RUN_DOCKER_TAIPEI_BOT " \
+                git clone lp:~oem-solutions-engineers/bugsy-config/+git/somerville-project-manifests -b ${STAGE_NAME} --depth=1 && \
+                cd somerville-project-manifests && \
+                git rev-parse --short HEAD && \
+                git push -f origin origin/${STAGE_NAME}:${STAGE_NAME}-${branch} \
+                "
+            fi
         '''
         } catch (e) {
             error("exception:" + e)
