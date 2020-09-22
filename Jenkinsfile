@@ -34,7 +34,7 @@ pipeline {
                     }
                     environment {
                         OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="ubuntu-desktop-deps"
+                        TEMPLATE="ubuntu-desktop-deps-rkl"
                     }
                     steps {
                         pack_fish();
