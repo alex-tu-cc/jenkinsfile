@@ -49,20 +49,6 @@ pipeline {
                     }
                 }
                 // use stage as image name. e.g. dell-bto-bionic-bionic-master, dell-bot-bionic-beaver-osp1 ..etc
-                stage('dell-bto-bionic-bionic-master') {
-                    steps {
-                        // use parameter as branch name. e.g. staging, alloem ..etc
-                        // so that it composed dell-bto-bionic-beaver-osp1-alloem
-                        clean_manifest('staging');
-                    }
-                }
-                stage('dell-bto-bionic-beaver-osp1') {
-                    steps {
-                        clean_manifest('staging');
-                        clean_manifest('alloem');
-                        fishManifest series:'bionic', target:'beaver-osp1-alloem', base:'beaver-osp1', update:'1861491', delete:'1852059'
-                    }
-                }
                 stage('dell-bto-focal-fossa') {
                     steps {
                         clean_manifest('staging');
@@ -85,36 +71,6 @@ pipeline {
             } }
         }
         stage('pack-fish-nvidia-rtd3') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
-        stage('pack-fish-gfx') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
-        stage('pack-fish-updatepkgs') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
-        stage('pack-fish-unattended') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
             steps { script {
                 try {
