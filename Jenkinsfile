@@ -62,16 +62,6 @@ pipeline {
             }
         }
 
-        stage('pack-fish-ubuntu-desktop') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
         stage('pack-fish-nvidia-rtd3') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
             steps { script {
@@ -82,7 +72,17 @@ pipeline {
                 }
             } }
         }
-        stage('pack-fish-ubuntu-desktop-rkl') {
+        stage('pack-fish-ubuntu-desktop-xstaging') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+            steps { script {
+                try {
+                      build("${STAGE_NAME}")
+                } catch(e) {
+                    unstable ("${STAGE_NAME} failed but continue.")
+                }
+            } }
+        }
+        stage('pack-fish-ubuntu-desktop') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
             steps { script {
                 try {
