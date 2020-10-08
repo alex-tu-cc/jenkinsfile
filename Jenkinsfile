@@ -53,8 +53,10 @@ pipeline {
                     steps {
                         clean_manifest('staging');
                         clean_manifest('alloem');
-                        clean_manifest('nvstaging');
                         fishManifest series:'focal', target:'fossa-alloem', base:'fossa', update:'1888630', delete:'1862919'
+                        clean_manifest('nvstaging');
+                        clean_manifest('rklstaging');
+                        fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1897219', delete:'1876673'
                     }
                 }
             }
@@ -71,6 +73,16 @@ pipeline {
             } }
         }
         stage('pack-fish-nvidia-rtd3') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+            steps { script {
+                try {
+                      build("${STAGE_NAME}")
+                } catch(e) {
+                    unstable ("${STAGE_NAME} failed but continue.")
+                }
+            } }
+        }
+        stage('pack-fish-ubuntu-desktop-rkl') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
             steps { script {
                 try {
