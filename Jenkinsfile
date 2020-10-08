@@ -34,7 +34,7 @@ pipeline {
                     }
                     environment {
                         OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="ubuntu-desktop-deps-rkl"
+                        TEMPLATE="ubuntu-desktop-deps-xstaging"
                     }
                     steps {
                         pack_fish();
@@ -131,6 +131,7 @@ def fish_fix_manifest() {
 
                 # land the fish to staging manifest
                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest --git -b -p somerville -r focal -e -c --target fossa-rklstaging  fossa --postRTS -u $LP_FOSSA --delete $LP_FOSSA_OLD"
+                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest --git -b -p somerville -r focal -e -c --target fossa-nvstaging  fossa --postRTS -u $LP_FOSSA --delete $LP_FOSSA_OLD"
 
                 docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                 docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
