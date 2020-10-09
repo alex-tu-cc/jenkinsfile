@@ -55,6 +55,7 @@ pipeline {
                         clean_manifest('alloem');
                         fishManifest series:'focal', target:'fossa-alloem', base:'fossa', update:'1888630', delete:'1862919'
                         clean_manifest('nvstaging');
+                        fishManifest series:'focal', target:'fossa-nvstaging', base:'fossa', update:'1899160', delete:'1867897'
                         clean_manifest('rklstaging');
                         fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1897219', delete:'1876673'
                     }
