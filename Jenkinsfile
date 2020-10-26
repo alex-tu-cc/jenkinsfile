@@ -130,7 +130,7 @@ def fish_fix_manifest() {
                 fi
 
                 # land the fish to staging manifest
-                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest --git -b -p somerville -r focal -e -c --target fossa-rklstaging  fossa --postRTS -u $LP_FOSSA --delete $LP_FOSSA_OLD"
+                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest --git -b -p somerville -r focal -e -c --target fossa-rklstaging  fossa --postRTS --delete $LP_FOSSA_OLD -u $LP_FOSSA"
 
                 docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                 docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
