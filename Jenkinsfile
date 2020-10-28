@@ -94,6 +94,16 @@ pipeline {
                 }
             } }
         }
+        stage('pack-fish-checkbox-pkgs') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+            steps { script {
+                try {
+                      build("${STAGE_NAME}")
+                } catch(e) {
+                    unstable ("${STAGE_NAME} failed but continue.")
+                }
+            } }
+        }
         stage('trigger-outside-server') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
             steps { script {
