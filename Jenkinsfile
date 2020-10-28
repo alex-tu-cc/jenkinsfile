@@ -53,6 +53,7 @@ pipeline {
                             cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
                             tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
                             mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
+                            tar -C ${OUTDIR} -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz
                             rm -rf ${OUTDIR}
                         '''
                     }
@@ -133,6 +134,9 @@ def fish_fix_manifest() {
                     # host tarball on lp ticket
                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $fossa_target_fish -c misc $LP_FOSSA"
+
+                    # update the repository overriding checkbox for focal
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "set -x; git clone -b checkbox-pkgs-focal-test --depth 1 git+ssh://oem-taipei-bot@git.launchpad.net/~lyoncore-team/lyoncore/+git/somerville-maas-override && rm -rf somerville-maas-override/* && tar -C somerville-maas-override -xvf /home/oem-taipei-bot/$fossa_target_fish && git -C somerville-maas-override add . && git -C somerville-maas-override commit -am $fossa_target_fish && git -C somerville-maas-override push origin checkbox-pkgs-focal-test"
                 fi
 
                 # land the fish to staging manifest
