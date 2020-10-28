@@ -63,34 +63,34 @@ pipeline {
                         }
                     }
                 }
-                stage('bionic-base') {
-                    agent {
-                        label 'docker'
-                    }
-                    environment {
-                        OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="checkbox-pkgs"
-                    }
-                    steps {
-                        sh '''#!/bin/bash
-                            set -ex
-                            mkdir -p ${OUTDIR}
-                            mkdir -p artifacts
-                            rm -rf artifacts/*
-                            #eval ${RUN_DOCKER_TAIPEI_BOT} \\"git clone git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools -b alext-test \\&\\& lp-fish-tools/bin/pack-fish.sh --base bionic-base --template ${TEMPLATE} --template-repo ${TEMPLATE_REPO} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
-                            eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base ${STAGE_NAME} --template ${TEMPLATE} --outdir ${OUTDIR}\\"
-                            cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
-                            tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
-                            mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
-                            rm -rf ${OUTDIR}
-                        '''
-                    }
-                    post {
-                        success {
-                            archiveArtifacts artifacts: 'artifacts/*', fingerprint: true
-                        }
-                    }
-                }
+                //stage('bionic-base') {
+                //    agent {
+                //        label 'docker'
+                //    }
+                //    environment {
+                //        OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
+                //        TEMPLATE="checkbox-pkgs"
+                //    }
+                //    steps {
+                //        sh '''#!/bin/bash
+                //            set -ex
+                //            mkdir -p ${OUTDIR}
+                //            mkdir -p artifacts
+                //            rm -rf artifacts/*
+                //            #eval ${RUN_DOCKER_TAIPEI_BOT} \\"git clone git+ssh://oem-taipei-bot@git.launchpad.net/~oem-solutions-group/oem-dev-tools/+git/lp-fish-tools -b alext-test \\&\\& lp-fish-tools/bin/pack-fish.sh --base bionic-base --template ${TEMPLATE} --template-repo ${TEMPLATE_REPO} --deb ${TARGET_DEB} --outdir ${OUTDIR}\\"
+                //            eval ${RUN_DOCKER_TAIPEI_BOT} \\"pack-fish.sh --base ${STAGE_NAME} --template ${TEMPLATE} --outdir ${OUTDIR}\\"
+                //            cp ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz
+                //            tar -C artifacts -xf ${OUTDIR}/${TEMPLATE}_fish1.tar.gz ./prepackage.dell
+                //            mv artifacts/prepackage.dell artifacts/${GIT_BRANCH##origin/}-${STAGE_NAME}-`date +%Y%m%d`_fish1.tar.gz.prepackage.dell
+                //            rm -rf ${OUTDIR}
+                //        '''
+                //    }
+                //    post {
+                //        success {
+                //            archiveArtifacts artifacts: 'artifacts/*', fingerprint: true
+                //        }
+                //    }
+                //}
             }
         }
         stage('fish-fix-manifest') {
@@ -127,16 +127,18 @@ def fish_fix_manifest() {
 
                 if [ "${new_pkgs}" == "true" ]; then
                     find latest_build
-                    fossa_fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep fossa)"
-                    echo fish-fix $fish_tarball
+                    fossa_fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | sort -r| grep fossa -m1)"
                     docker cp $fossa_fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
                     fossa_target_fish=$(basename $fossa_fish_tarball)
                     # host tarball on lp ticket
                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
-                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $fossa_target_fish -c misc $LP_FOSSA"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $fossa_target_fish -c misc $LP_FOSSA; ls"
 
                     # update the repository overriding checkbox for focal
-                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "set -x; git clone -b checkbox-pkgs-focal-test --depth 1 git+ssh://oem-taipei-bot@git.launchpad.net/~lyoncore-team/lyoncore/+git/somerville-maas-override && rm -rf somerville-maas-override/* && tar -C somerville-maas-override -xvf /home/oem-taipei-bot/$fossa_target_fish && git -C somerville-maas-override add . && git -C somerville-maas-override commit -am $fossa_target_fish && git -C somerville-maas-override push origin checkbox-pkgs-focal-test"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
+                    docker cp $fossa_fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "set -x; ls; git clone -b checkbox-pkgs-focal-test --depth 1 git+ssh://oem-taipei-bot@git.launchpad.net/~lyoncore-team/lyoncore/+git/somerville-maas-override && rm -rf somerville-maas-override/* && pwd && ls -l && tar -C somerville-maas-override -xvf $fossa_target_fish && git -C somerville-maas-override add . && git -C somerville-maas-override commit -am $fossa_target_fish && git -C somerville-maas-override push origin checkbox-pkgs-focal-test"
                 fi
 
                 # land the fish to staging manifest
