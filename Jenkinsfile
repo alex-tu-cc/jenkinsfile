@@ -5,6 +5,8 @@ pipeline {
         DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
         RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
         TARGET_DEB=""
+        LP_FOSSA="1901818"
+        LP_FOSSA_VERIFIED="1901819"
     }
     stages {
         stage('prepare') {
@@ -89,6 +91,57 @@ pipeline {
                     }
                 }
             }
+        }
+        stage('fish-fix-manifest') {
+            agent {
+                label 'docker'
+            }
+            steps {
+                fish_fix_manifest();
+            }
+        }
+    }
+}
+def fish_fix_manifest() {
+    env.new_pkgs="true"
+    script {
+        try {
+            copyArtifacts(
+            projectName: "${JOB_NAME}",
+            filter: "artifacts/*.tar.gz",
+            target: 'latest_build',
+            selector: specific("${BUILD_NUMBER}"));
+        } catch(e) {
+            echo "Not a successful build"
+            env.new_pkgs="false"
+        }
+        try {
+            sh '''#!/bin/bash
+                set -ex
+                docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
+                # a workaround to wait credential is ready and FishInitFile is there
+                while [ -z "$(docker exec -t oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} ls | grep FishInitFile)" ]; do
+                    sleep 10
+                done
+
+                if [ "${new_pkgs}" == "true" ]; then
+                    find latest_build
+                    fossa_fish_tarball="$(find latest_build -name "*_fish1.tar.gz" | grep fossa)"
+                    echo fish-fix $fish_tarball
+                    docker cp $fossa_fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
+                    fossa_target_fish=$(basename $fossa_fish_tarball)
+                    # host tarball on lp ticket
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $fossa_target_fish -c misc $LP_FOSSA"
+                fi
+
+                # land the fish to staging manifest
+                # docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest --git -b -p somerville -r focal -e -c --target fossa-staging  fossa --postRTS -u $LP_FOSSA --delete $LP_FOSSA_OLD"
+                docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
+                docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
+            '''
+        } catch (e) {
+            error("exception:" + e)
         }
     }
 }
