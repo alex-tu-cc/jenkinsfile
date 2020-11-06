@@ -57,7 +57,7 @@ pipeline {
                         clean_manifest('nvstaging');
                         fishManifest series:'focal', target:'fossa-nvstaging', base:'fossa', update:'1899160', delete:'1867897'
                         clean_manifest('rklstaging');
-                        fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1897219', delete:'1876673'
+                        fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1902184', delete:'1876673'
                         clean_manifest('audiostaging');
                     }
                 }
