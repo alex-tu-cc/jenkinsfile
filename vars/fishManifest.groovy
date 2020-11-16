@@ -19,8 +19,8 @@ def call(Map config) {
                 else
                     command="fish-manifest --git -b -p ${project} -r ${series} -e -c --target ${target} ${base} --postRTS "
                 fi
-                [ -n "${update}" ] && command="$command -u ${update}"
-                [ -n "${delete}" ] && command="$command --delete ${delete}"
+                [ -n "${update}" ] && [ "${update}" != "null" ] && command="$command -u ${update}"
+                [ -n "${delete}" ] && [ "${delete}" != "null" ] && command="$command --delete ${delete}"
                 $RUN_DOCKER_TAIPEI_BOT "$command"
             '''
             } catch (e) {
