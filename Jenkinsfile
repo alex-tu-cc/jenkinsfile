@@ -53,6 +53,7 @@ pipeline {
                     steps {
                         clean_manifest('staging');
                         clean_manifest('nvstaging');
+                        fishManifest series:'focal', target:'fossa'
                         fishManifest series:'focal', target:'fossa-nvstaging', base:'fossa', update:'1899160', delete:'1867897'
                         clean_manifest('rklstaging');
                         fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905351', delete:'1876673'
