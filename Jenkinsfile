@@ -56,9 +56,9 @@ pipeline {
                         //fishManifest series:'focal', target:'fossa'
                         fishManifest series:'focal', target:'fossa-nvstaging', base:'fossa', update:'1899160', delete:'1867897'
                         clean_manifest('rklstaging');
-                        fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905351', delete:'1909531'
+                        fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905351', delete:'1876673'
                         fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1907532', delete:'1891603'
-                        fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1907532', delete:'1905893'
+                        fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905893'
                         fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1909908'
                         clean_manifest('alloem');
                         fishManifest series:'focal', target:'fossa-alloem', base:'fossa-rklstaging', update:'1888630', delete:'1862919'
