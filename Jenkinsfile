@@ -52,9 +52,9 @@ pipeline {
                 stage('dell-bto-focal-fossa') {
                     steps {
                         //clean_manifest('staging');
-                        clean_manifest('nvstaging');
+                        clean_manifest('edge');
                         //fishManifest series:'focal', target:'fossa'
-                        fishManifest series:'focal',tag:'fossa-edge' ,target:'fossa-nvstaging', base:'fossa', update:'1899160', delete:'1867897 1891603'
+                        fishManifest series:'focal',tag:'fossa-edge' ,target:'fossa-edge', base:'fossa',delete:'1864658 1876673 1891603'
                         //clean_manifest('rklstaging');
                         //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905351', delete:'1876673'
                         //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1907532', delete:'1891603'
