@@ -51,83 +51,83 @@ pipeline {
                 // use stage as image name. e.g. dell-bto-bionic-bionic-master, dell-bot-bionic-beaver-osp1 ..etc
                 stage('dell-bto-focal-fossa') {
                     steps {
-                        clean_manifest('staging');
+                        //clean_manifest('staging');
                         clean_manifest('nvstaging');
                         //fishManifest series:'focal', target:'fossa'
-                        fishManifest series:'focal', target:'fossa-nvstaging', base:'fossa', update:'1899160', delete:'1867897'
-                        clean_manifest('rklstaging');
-                        fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905351', delete:'1876673'
-                        fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1907532', delete:'1891603'
-                        fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905893'
-                        fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1909908'
-                        clean_manifest('alloem');
-                        fishManifest series:'focal', target:'fossa-alloem', base:'fossa-rklstaging', update:'1888630', delete:'1862919'
-                        clean_manifest('audiostaging');
+                        fishManifest series:'focal',tag:'fossa-edge' ,target:'fossa-nvstaging', base:'fossa', update:'1899160', delete:'1867897 1891603'
+                        //clean_manifest('rklstaging');
+                        //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905351', delete:'1876673'
+                        //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1907532', delete:'1891603'
+                        //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905893'
+                        //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1909908'
+                        //clean_manifest('alloem');
+                        //fishManifest series:'focal', target:'fossa-alloem', base:'fossa-rklstaging', update:'1888630', delete:'1862919'
+                        //clean_manifest('audiostaging');
                     }
                 }
             }
         }
 
-        stage('pack-fish-nvidia-rtd3') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
-        stage('pack-fish-ubuntu-desktop-xstaging') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
-        stage('pack-fish-ubuntu-desktop') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
-        stage('pack-fish-checkbox-pkgs') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
-        stage('pack-fish-maas-override') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
-        stage('trigger-outside-server') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
+        //stage('pack-fish-nvidia-rtd3') {
+        //    when { environment name: 'is_update_pkgs', value: 'yes' }
+        //    steps { script {
+        //        try {
+        //              build("${STAGE_NAME}")
+        //        } catch(e) {
+        //            unstable ("${STAGE_NAME} failed but continue.")
+        //        }
+        //    } }
+        //}
+        //stage('pack-fish-ubuntu-desktop-xstaging') {
+        //    when { environment name: 'is_update_pkgs', value: 'yes' }
+        //    steps { script {
+        //        try {
+        //              build("${STAGE_NAME}")
+        //        } catch(e) {
+        //            unstable ("${STAGE_NAME} failed but continue.")
+        //        }
+        //    } }
+        //}
+        //stage('pack-fish-ubuntu-desktop') {
+        //    when { environment name: 'is_update_pkgs', value: 'yes' }
+        //    steps { script {
+        //        try {
+        //              build("${STAGE_NAME}")
+        //        } catch(e) {
+        //            unstable ("${STAGE_NAME} failed but continue.")
+        //        }
+        //    } }
+        //}
+        //stage('pack-fish-checkbox-pkgs') {
+        //    when { environment name: 'is_update_pkgs', value: 'yes' }
+        //    steps { script {
+        //        try {
+        //              build("${STAGE_NAME}")
+        //        } catch(e) {
+        //            unstable ("${STAGE_NAME} failed but continue.")
+        //        }
+        //    } }
+        //}
+        //stage('pack-fish-maas-override') {
+        //    when { environment name: 'is_update_pkgs', value: 'yes' }
+        //    steps { script {
+        //        try {
+        //              build("${STAGE_NAME}")
+        //        } catch(e) {
+        //            unstable ("${STAGE_NAME} failed but continue.")
+        //        }
+        //    } }
+        //}
+        //stage('trigger-outside-server') {
+        //    when { environment name: 'is_update_pkgs', value: 'yes' }
+        //    steps { script {
+        //        try {
+        //              build("${STAGE_NAME}")
+        //        } catch(e) {
+        //            unstable ("${STAGE_NAME} failed but continue.")
+        //        }
+        //    } }
+        //}
     }
 }
 
