@@ -3,6 +3,7 @@ def call(Map config) {
     node {
         env.base = "${config.base}"
         env.project = "somerville"
+        env.tag = "${config.tag}"
         env.target = "${config.target}"
         env.series = "${config.series}"
         env.update = "${config.update}"
@@ -18,7 +19,11 @@ def call(Map config) {
                     if [ "${series}" == "bionic" ]; then
                         command="fish-manifest -b -p ${project} -r ${series} -e -c --target ${target} ${base} --postRTS "
                     else
-                        command="fish-manifest --git -b -p ${project} -r ${series} -e -c --target ${target} ${base} --postRTS "
+                        if [ -n "${tag}" ] && [ "${tag}" != "null" ]; then
+                            command="fish-manifest --git -b -p ${project} -r ${series} -e -c -t ${tag} -a --target ${target} ${base} --postRTS "
+                        else
+                            command="fish-manifest --git -b -p ${project} -r ${series} -e -c --target ${target} ${base} --postRTS "
+                        fi
                     fi
                 else
                     # reflash master manifest
@@ -28,8 +33,16 @@ def call(Map config) {
                         command="fish-manifest --git -b -p ${project} -r ${series} -e -c --target ${target} ${target}"
                     fi
                 fi
-                [ -n "${update}" ] && [ "${update}" != "null" ] && command="$command -u ${update}"
-                [ -n "${delete}" ] && [ "${delete}" != "null" ] && command="$command --delete ${delete}"
+                if [ -n "${update}" ] && [ "${update}" != "null" ]; then
+                    for i in ${update}; do
+                        command="$command -u ${i}"
+                    done
+                fi
+                if [ -n "${delete}" ] && [ "${delete}" != "null" ]; then
+                    for i in ${delete}; do
+                        command="$command --delete ${i}"
+                    done
+                fi
                 $RUN_DOCKER_TAIPEI_BOT "$command"
             '''
             } catch (e) {
