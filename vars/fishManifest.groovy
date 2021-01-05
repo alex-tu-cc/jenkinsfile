@@ -43,7 +43,8 @@ def call(Map config) {
                         command="$command --delete ${i}"
                     done
                 fi
-                $RUN_DOCKER_TAIPEI_BOT "$command"
+                # ignore all duplicated packages
+                $RUN_DOCKER_TAIPEI_BOT "yes| $command"
             '''
             } catch (e) {
                 error("exception:" + e)
