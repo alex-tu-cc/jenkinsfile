@@ -65,9 +65,10 @@ set -x
 GIT_SSH_COMMAND="ssh -p 10022" git clone git@office.cctu.space:alextu/internal-tools.git
 git -C internal-tools rev-parse HEAD
 #bash internal-tools/trigger-jenkins-job.sh
-bash internal-tools/trigger-autosanity-pool.sh -p fossa-staging
-bash internal-tools/trigger-autosanity-pool.sh -p fossa-edge
-bash internal-tools/trigger-autosanity-pool.sh -p fossa-alloem
+bash internal-tools/trigger-autosanity-pool.sh --tag-test -p fossa-staging
+bash internal-tools/trigger-autosanity-pool.sh --tag-test -p fossa-edge
+bash internal-tools/trigger-autosanity-pool.sh --tag-test -p fossa-alloem
+bash internal-tools/trigger-autosanity-pool.sh --tag-test -p fossa-rklstaging
 EOF
                 docker cp do.sh oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls && cat ./do.sh"
