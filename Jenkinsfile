@@ -34,9 +34,37 @@ pipeline {
                         sh 'echo error!'
                     }
                 }
-
-
             }
+        }
+        stage('pack-fish-nvidia-rtd3') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+            steps { script {
+                try {
+                      build("${STAGE_NAME}")
+                } catch(e) {
+                    unstable ("${STAGE_NAME} failed but continue.")
+                }
+            } }
+        }
+        stage('pack-fish-ubuntu-desktop-xstaging') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+            steps { script {
+                try {
+                      build("${STAGE_NAME}")
+                } catch(e) {
+                    unstable ("${STAGE_NAME} failed but continue.")
+                }
+            } }
+        }
+        stage('pack-fish-ubuntu-desktop') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+            steps { script {
+                try {
+                      build("${STAGE_NAME}")
+                } catch(e) {
+                    unstable ("${STAGE_NAME} failed but continue.")
+                }
+            } }
         }
         stage('parallel-clean') {
             parallel {
@@ -68,37 +96,6 @@ pipeline {
                     }
                 }
             }
-        }
-
-        stage('pack-fish-nvidia-rtd3') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
-        stage('pack-fish-ubuntu-desktop-xstaging') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
-        stage('pack-fish-ubuntu-desktop') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
         }
         stage('pack-fish-checkbox-pkgs') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
