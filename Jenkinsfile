@@ -63,13 +63,11 @@ cat << EOF > do.sh
 #!/bin/bash
 set -x
 GIT_SSH_COMMAND=\"ssh -p 10022\" git clone git@office.cctu.space:alextu/internal-db.git
-git clone git+ssh://git.launchpad.net/~lyoncore-team/lyoncore/+git/solution-db
-export source=\"\\$(find solution-db -name \"cid_clabel_mapping.json\")\"
-cp \"\\$source\" internal-db/cid_clabel_mapping.json
-cd internal-db
-git add cid_clabel_mapping.json
-git commit -m "sync cid_clabel_mapping.json from git+ssh://git.launchpad.net/~lyoncore-team/lyoncore/+git/solution-db"
-GIT_SSH_COMMAND=\"ssh -p 10022\" git push origin master
+wget https://gitlab.com/alex-tu-cc/prepare-checkbox-sanity/-/raw/master/usr/lib/prepare-checkbox-sanity/sideload.json -O internal-db/checkbox-sideload-dev-staging.json
+sed -i 's/dev/dev-staging/' internal-db/checkbox-sideload-dev-staging.json
+git -C internal-db add checkbox-sideload-dev-staging.json
+git -C internal-db commit -m "sync checkbox sideload.json from https://gitlab.com/alex-tu-cc/prepare-checkbox-sanity/-/raw/master/usr/lib/prepare-checkbox-sanity/sideload.json then change it to dev-staging"
+GIT_SSH_COMMAND=\"ssh -p 10022\" git -C internal-db push origin master
 EOF
                 docker cp do.sh oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls && cat ./do.sh"
