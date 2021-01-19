@@ -130,10 +130,10 @@ def fish_fix_manifest() {
                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $fossa_target_fish -c misc $LP_FOSSA"
                 fi
 
-                # land the fish to staging manifest
-                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes|fish-manifest --git -b -p somerville -r focal -e -c --target fossa-rklstaging  fossa --postRTS -u $LP_FOSSA --delete $LP_FOSSA_OLD"
-                # ignore duplicate pkgs, because we are testing nvidia-prime and gpu-manager, the dependencies would be duplicated.
-                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes|fish-manifest --git -b -p somerville -r focal -e -c --target fossa-nvstaging  fossa --postRTS -u $LP_FOSSA --delete $LP_FOSSA_OLD"
+                ## land the fish to staging manifest
+                #docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes|fish-manifest --git -b -p somerville -r focal -e -c --target fossa-rklstaging  fossa --postRTS -u $LP_FOSSA --delete $LP_FOSSA_OLD"
+                ## ignore duplicate pkgs, because we are testing nvidia-prime and gpu-manager, the dependencies would be duplicated.
+                #docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes|fish-manifest --git -b -p somerville -r focal -e -c --target fossa-nvstaging  fossa --postRTS -u $LP_FOSSA --delete $LP_FOSSA_OLD"
 
                 docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                 docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
