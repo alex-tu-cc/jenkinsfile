@@ -128,11 +128,11 @@ def fish_fix_manifest() {
                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $fossa_target_fish -c misc $LP_FOSSA"
                 fi
 
-                # land the fish to nvidia staging manifest
-                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes|fish-manifest --git -b -p somerville -r focal -e -c --target fossa-nvstaging fossa --postRTS -u $LP_FOSSA"
+                ## land the fish to nvidia staging manifest
+                #docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes|fish-manifest --git -b -p somerville -r focal -e -c --target fossa-nvstaging fossa --postRTS -u $LP_FOSSA"
 
-                # land the fish to rkl staging manifest
-                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes|fish-manifest --git -b -p somerville -r focal -e -c --target fossa-rklstaging fossa --postRTS -u $LP_FOSSA"
+                ## land the fish to rkl staging manifest
+                #docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes|fish-manifest --git -b -p somerville -r focal -e -c --target fossa-rklstaging fossa --postRTS -u $LP_FOSSA"
 
                 docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
                 docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
