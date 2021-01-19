@@ -129,11 +129,11 @@ def fish_fix_manifest() {
                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $fossa_target_fish -c misc $LP_FOSSA"
                 fi
 
-                # land the fish to staging manifest
-                docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest --git -b -p somerville -r focal -e -c --target fossa-staging  fossa --postRTS -u $LP_FOSSA --delete $LP_FOSSA_OLD"
+                ## land the fish to staging manifest
+                #docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "fish-manifest --git -b -p somerville -r focal -e -c --target fossa-staging  fossa --postRTS -u $LP_FOSSA --delete $LP_FOSSA_OLD"
 
-                docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
-                docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
+                #docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
+                #docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
             '''
         } catch (e) {
             error("exception:" + e)
