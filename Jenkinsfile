@@ -66,6 +66,16 @@ pipeline {
                 }
             } }
         }
+        stage('pack-fish-openssh') {
+            when { environment name: 'is_update_pkgs', value: 'yes' }
+            steps { script {
+                try {
+                      build("${STAGE_NAME}")
+                } catch(e) {
+                    unstable ("${STAGE_NAME} failed but continue.")
+                }
+            } }
+        }
         stage('parallel-clean') {
             parallel {
                 stage('oem-taipei-bot-0') {
