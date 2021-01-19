@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_REPO = "somerville-jenkins.cctu.space:5000"
         RUN_DOCKER_TAIPEI_BOT="docker pull \${DOCKER_REPO}/oem-taipei-bot && docker run --name oem-taipei-bot-\${BUILD_TAG}-\${STAGE_NAME} --rm -h oem-taipei-bot --volumes-from docker-volumes \${DOCKER_REPO}/oem-taipei-bot"
-        LP_FOSSA="1896445"
+        LP_FOSSA="1912397"
     }
     stages {
         stage('prepare') {
@@ -33,7 +33,7 @@ pipeline {
                     }
                     environment {
                         OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="nvidia-rtd3"
+                        TEMPLATE="openssh"
                     }
                     steps {
                         pack_fish();
