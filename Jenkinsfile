@@ -36,16 +36,17 @@ pipeline {
                 }
             }
         }
-        stage('pack-fish-nvidia-rtd3') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
+        // We don't need the private built nvidia-prime and ubuntu-drivers-common for now
+        //stage('pack-fish-nvidia-rtd3') {
+        //    when { environment name: 'is_update_pkgs', value: 'yes' }
+        //    steps { script {
+        //        try {
+        //              build("${STAGE_NAME}")
+        //        } catch(e) {
+        //            unstable ("${STAGE_NAME} failed but continue.")
+        //        }
+        //    } }
+        //}
         stage('pack-fish-ubuntu-desktop-xstaging') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
             steps { script {
