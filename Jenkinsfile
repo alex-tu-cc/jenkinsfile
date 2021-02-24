@@ -107,6 +107,13 @@ pipeline {
                         //clean_manifest('audiostaging');
                     }
                 }
+                // use stage as image name. e.g. dell-bto-bionic-bionic-master, dell-bot-bionic-beaver-osp1 ..etc
+                stage('dell-bto-focal-fossa-edge') {
+                    steps {
+                        clean_manifest('alloem');
+                        fishManifest series:'focal', target:'fossa-alloem', base:'fossa', update:'1888630', delete:'1862919'
+                    }
+                }
             }
         }
         stage('pack-fish-checkbox-pkgs') {
