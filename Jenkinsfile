@@ -102,18 +102,19 @@ pipeline {
                         fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1907532', delete:'1891603'
                         fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905893'
                         fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1909908'
-                        clean_manifest('alloem');
-                        fishManifest series:'focal', target:'fossa-alloem', base:'fossa-edge', update:'1888630', delete:'1862919'
+                        //clean_manifest('alloem','');
+                        //fishManifest series:'focal', target:'fossa-alloem', base:'fossa-edge', update:'1888630', delete:'1862919'
                         //clean_manifest('audiostaging');
                     }
                 }
-                // use stage as image name. e.g. dell-bto-bionic-bionic-master, dell-bot-bionic-beaver-osp1 ..etc
-                stage('dell-bto-focal-fossa-edge') {
-                    steps {
-                        clean_manifest('alloem');
-                        fishManifest series:'focal', target:'fossa-alloem', base:'fossa', update:'1888630', delete:'1862919'
-                    }
-                }
+                // It's failed here
+                //// use stage as image name. e.g. dell-bto-bionic-bionic-master, dell-bot-bionic-beaver-osp1 ..etc
+                //stage('dell-bto-focal-fossa-edge') {
+                //    steps {
+                //        clean_manifest('alloem');
+                //        fishManifest series:'focal', target:'fossa-alloem', base:'fossa', update:'1888630', delete:'1862919'
+                //    }
+                //}
             }
         }
         stage('pack-fish-checkbox-pkgs') {
