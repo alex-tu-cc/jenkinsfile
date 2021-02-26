@@ -67,7 +67,6 @@ git -C internal-tools rev-parse HEAD
 #bash internal-tools/trigger-jenkins-job.sh
 bash internal-tools/trigger-autosanity-pool.sh -p fossa-staging
 bash internal-tools/trigger-autosanity-pool.sh -p fossa-edge-staging
-bash internal-tools/trigger-autosanity-pool.sh -p fossa-alloem
 EOF
                 docker cp do.sh oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls && cat ./do.sh"
