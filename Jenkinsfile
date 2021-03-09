@@ -33,7 +33,7 @@ pipeline {
                     }
                     environment {
                         OUTDIR="/srv/tmp/${BUILD_TAG}-${STAGE_NAME}"
-                        TEMPLATE="drm-tip"
+                        TEMPLATE="drm-intel-next"
                     }
                     steps {
                         pack_fish();
