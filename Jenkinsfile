@@ -65,7 +65,7 @@ sudo apt-get update; sudo apt-get install -y bzr ubuntu-dev-tools
 bzr branch lp:ubuntu-archive-tools
 cd ubuntu-archive-tools
 apt-get install --dry-run prepare-checkbox-sanity 2>&1 | tee prepare-checkbox-sanity.list
-apt-cache show \$(apt-cache madison `cat prepare-checkbox-sanity.list | grep Inst | awk '{print \$2}' | xargs` | grep 'checkbox-dev' | awk '{print \$1}') | grep -E "(Package)|(Source)" | awk '{print \$2}' | uniq > checkbox.list
+apt-cache show \$(apt-cache madison \$(cat prepare-checkbox-sanity.list | grep Inst | awk '{print \$2}' | xargs) | grep 'checkbox-dev' | awk '{print \$1}') | grep -E "(Package)|(Source)" | awk '{print \$2}' | uniq > checkbox.list
 ./copy-package \$(cat checkbox.list | xargs) --from="ppa:checkbox-dev/ubuntu/ppa" --from-suit=focal --to="ppa:oem-taipei-bot/ubuntu/checkbox-snapshot-testing" --to-suite=focal -b -y --skip-missing
 EOF
                 docker cp do.sh oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
