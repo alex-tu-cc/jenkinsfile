@@ -53,20 +53,21 @@ def trigger(String server, String user, String job) {
             status = sh(returnStatus: true,
             script: '''#!/bin/bash
                 set -ex
-                docker run -d -t --name fossa.collect-deps-${BUILD_TAG}-${STAGE_NAME} --entrypoint=bash -v $HOME:/mnt somerville-jenkins.cctu.space:5000/fossa.collect-deps
+                docker run -d -t --name fossa.collect-deps-${BUILD_TAG}-${STAGE_NAME} --entrypoint=bash somerville-jenkins.cctu.space:5000/fossa.collect-deps
 cat << EOF > do.sh
 #!/bin/bash
 set -x
 sudo add-apt-repository ppa:checkbox-dev/ppa -y
 sudo apt-get update;
 apt-get install --dry-run prepare-checkbox-sanity 2>&1 | tee prepare-checkbox-sanity.list
-apt-cache show \$(apt-cache madison \$(cat prepare-checkbox-sanity.list | grep Inst | awk '{print \$2}' | xargs) | grep 'checkbox-dev' | awk '{print \$1}') | grep -E "(Package)|(Source)" | awk '{print \$2}' | uniq
+apt-cache show \\$(apt-cache madison \\$(cat prepare-checkbox-sanity.list | grep Inst | awk '{print \\$2}' | xargs) | grep 'checkbox-dev' | awk '{print \\$1}') | grep -E "(Package)|(Source)" | awk '{print \\$2}' | uniq > /tmp/src-pkg-list
 EOF
                 docker cp do.sh fossa.collect-deps-${BUILD_TAG}-${STAGE_NAME}:/tmp
                 docker exec fossa.collect-deps-${BUILD_TAG}-${STAGE_NAME} bash -c "ls /tmp && cat /tmp/do.sh"
-                docker exec fossa.collect-deps-${BUILD_TAG}-${STAGE_NAME} bash -c "bash /tmp/do.sh" | tee src-pkg-list
+                docker exec fossa.collect-deps-${BUILD_TAG}-${STAGE_NAME} bash -c "bash /tmp/do.sh"
+                docker cp fossa.collect-deps-${BUILD_TAG}-${STAGE_NAME}:/tmp/src-pkg-list .
                 docker stop fossa.collect-deps-${BUILD_TAG}-${STAGE_NAME}
-                docker rm oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
+                docker rm fossa.collect-deps-${BUILD_TAG}-${STAGE_NAME}
 
                 docker run -d -t --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} -h oem-taipei-bot --volumes-from docker-volumes ${DOCKER_REPO}/oem-taipei-bot bash
                 # a workaround to wait credential is ready and FishInitFile is there
@@ -81,11 +82,11 @@ bzr branch lp:ubuntu-archive-tools
 cd ubuntu-archive-tools
 #apt-get install --dry-run prepare-checkbox-sanity 2>&1 | tee prepare-checkbox-sanity.list
 #apt-cache show \$(apt-cache madison \$(cat prepare-checkbox-sanity.list | grep Inst | awk '{print \$2}' | xargs) | grep 'checkbox-dev' | awk '{print \$1}') | grep -E "(Package)|(Source)" | awk '{print \$2}' | uniq > checkbox.list
-#cat log1 | grep -E "(Package)|(Source)" | awk '{print \$2}' | uniq > checkbox.list
-./copy-package \$(cat src-pkg-list | xargs) --from="ppa:checkbox-dev/ubuntu/ppa" --from-suit=focal --to="ppa:oem-taipei-bot/ubuntu/checkbox-snapshot-testing" --to-suite=focal -b -y --skip-missing
+#cat /tmp/log1 | grep -E "(Package)|(Source)" | awk '{print \\$2}' | uniq > /tmp/src-pkg-list
+./copy-package \\$(cat /tmp/src-pkg-list | xargs) --from="ppa:checkbox-dev/ubuntu/ppa" --from-suit=focal --to="ppa:oem-taipei-bot/ubuntu/checkbox-snapshot-staging" --to-suite=focal -b -y --skip-missing
 EOF
                 docker cp do.sh oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
-                docker cp src-pkg-list oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
+                docker cp src-pkg-list oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/tmp/
                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls && cat ./do.sh"
                 docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "bash ./do.sh"
                 docker stop oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}
