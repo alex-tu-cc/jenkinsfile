@@ -29,7 +29,7 @@ pipeline {
                         sh "echo ignore me"
                     }
                 }
-                stage('snapshot-checkbox-dev-staging') {
+                stage('snapshot-checkbox-dev-verified') {
                     agent {
                         label 'docker'
                     }
@@ -57,10 +57,10 @@ def trigger(String server, String user, String job) {
 cat << EOF > do.sh
 #!/bin/bash
 set -x
-sudo add-apt-repository ppa:checkbox-dev/ppa -y
+sudo add-apt-repository ppa:oem-taipei-bot/checkbox-snapshot-staging -y
 sudo apt-get update;
 apt-get install --dry-run prepare-checkbox-sanity 2>&1 | tee prepare-checkbox-sanity.list
-apt-cache show \\$(apt-cache madison \\$(cat prepare-checkbox-sanity.list | grep Inst | awk '{print \\$2}' | xargs) | grep 'checkbox-dev' | awk '{print \\$1}') | grep -E "(Package)|(Source)" | awk '{print \\$2}' | uniq > /tmp/src-pkg-list
+apt-cache show \\$(apt-cache madison \\$(cat prepare-checkbox-sanity.list | grep Inst | awk '{print \\$2}' | xargs) | grep 'checkbox-snapshot-staging' | awk '{print \\$1}') | grep -E "(Package)|(Source)" | awk '{print \\$2}' | uniq > /tmp/src-pkg-list
 EOF
                 docker cp do.sh fossa.collect-deps-${BUILD_TAG}-${STAGE_NAME}:/tmp
                 docker exec fossa.collect-deps-${BUILD_TAG}-${STAGE_NAME} bash -c "ls /tmp && cat /tmp/do.sh"
@@ -83,7 +83,7 @@ cd ubuntu-archive-tools
 #apt-get install --dry-run prepare-checkbox-sanity 2>&1 | tee prepare-checkbox-sanity.list
 #apt-cache show \$(apt-cache madison \$(cat prepare-checkbox-sanity.list | grep Inst | awk '{print \$2}' | xargs) | grep 'checkbox-dev' | awk '{print \$1}') | grep -E "(Package)|(Source)" | awk '{print \$2}' | uniq > checkbox.list
 #cat /tmp/log1 | grep -E "(Package)|(Source)" | awk '{print \\$2}' | uniq > /tmp/src-pkg-list
-./copy-package \\$(cat /tmp/src-pkg-list | xargs) --from="ppa:checkbox-dev/ubuntu/ppa" --from-suit=focal --to="ppa:oem-taipei-bot/ubuntu/checkbox-snapshot-staging" --to-suite=focal -b -y --skip-missing
+./copy-package \\$(cat /tmp/src-pkg-list | xargs) --from="ppa:oem-taipei-bot/ubuntu/checkbox-snapshot-staging" --from-suit=focal --to="ppa:oem-taipei-bot/ubuntu/checkbox-snapshot" --to-suite=focal -b -y --skip-missing
 EOF
                 docker cp do.sh oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
                 docker cp src-pkg-list oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/tmp/
