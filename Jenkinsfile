@@ -126,6 +126,12 @@ def fish_fix_manifest() {
                     # host tarball on lp ticket
                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $fossa_target_fish -c misc $LP_FOSSA"
+                    # host it on git repository
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "git clone git+ssh://git.launchpad.net/~oem-solutions-engineers/pc-enablement/+git/pack-fish.openssh-fossa"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "rm -rf pack-fish.openssh-fossa/*"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "tar -C pack-fish.openssh-fossa -xvf /home/oem-taipei-bot/$fossa_target_fish"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "git -C pack-fish.openssh-fossa add . || true"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "git -C pack-fish.openssh-fossa commit -m "update from $fossa_target_fish" || true"
                 fi
 
                 ## land the fish to nvidia staging manifest
