@@ -123,15 +123,16 @@ def fish_fix_manifest() {
                     echo fish-fix $fish_tarball
                     docker cp $fossa_fish_tarball oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
                     fossa_target_fish=$(basename $fossa_fish_tarball)
-                    # host tarball on lp ticket
-                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
-                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $fossa_target_fish -c misc $LP_FOSSA"
                     # host it on git repository
                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "git clone git+ssh://git.launchpad.net/~oem-solutions-engineers/pc-enablement/+git/pack-fish.openssh-fossa"
                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "rm -rf pack-fish.openssh-fossa/*"
-                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "tar -C pack-fish.openssh-fossa -xvf /home/oem-taipei-bot/$fossa_target_fish"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "tar -C pack-fish.openssh-fossa -xvf $fossa_target_fish"
                     docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "git -C pack-fish.openssh-fossa add . || true"
-                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "git -C pack-fish.openssh-fossa commit -m "update from $fossa_target_fish" || true"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "git -C pack-fish.openssh-fossa commit -m $fossa_target_fish || true"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "git -C pack-fish.openssh-fossa push origin master"
+                    # host tarball on lp ticket
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "ls"
+                    docker exec oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} bash -c "yes| fish-fix --nodep -b -f $fossa_target_fish -c misc $LP_FOSSA"
                 fi
 
                 ## land the fish to nvidia staging manifest
