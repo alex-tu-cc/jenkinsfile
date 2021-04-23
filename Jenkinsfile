@@ -14,13 +14,19 @@ pipeline{
         stage('image build'){
             steps{
                 script{
-                    if ( "${SKIP_BUILD_IMG}" != "true" ){
-                        echo 'Starting ${TARGET_IMG} Sanity Check...'
+                    skip_build_iso = "false"
+                    if ( "${IMAGE_NO}" != "lastSuccessfulBuild" || "${IMAGE_NO}" == "no-provision" || "${SKIP_BUILD_IMG}" == "true" ){
+                        skip_build_iso = "true"
+                    }
+                    if ( "${skip_build_iso}" != "true" ){
+                        echo "Starting ${TARGET_IMG} image build..."
                         def imagebuild = build job: "${TARGET_IMG}",
                         parameters: [[$class: 'StringParameterValue', name: 'VAGRANT_CLEAN', value: "${VAGRANT_CLEAN}"],
-                                     [$class: 'StringParameterValue', name: 'SPFISH', value: "false"]
+                                    [$class: 'StringParameterValue', name: 'SPFISH', value: "false"]
                                     ]
-                        if ( "${IMAGE_NO}" == "lastSuccessfulBuild" ) IMAGE_NO = imagebuild.getNumber()
+                        IMAGE_NO = imagebuild.getNumber()
+                    } else {
+                        echo "Skip build ISO."
                     }
                 }
             }
@@ -28,14 +34,20 @@ pipeline{
         stage('iso to MAAS compatible image'){
             steps{
                 script{
-                    if ( "${SKIP_BUILD_IMG}" != "true" ){
+                    skip_build_maas = "false"
+                    if ( "${IMAGE_NO}" == "no-provision" || "${SKIP_BUILD_IMG}" == "true" ){
+                        skip_build_maas = "true"
+                    }
+                    if ( "${skip_build_maas}" != "true" ){
                         echo 'Starting to make iso to MAAS image.'
                         build job: 'sanity-1-generic-iso-to-maas-img',
-                        parameters: [[$class: 'StringParameterValue', name: 'jenkins_job', value: TARGET_IMG],
+                        parameters: [[$class: 'StringParameterValue', name: 'jenkins_job', value: "${TARGET_IMG}"],
                                     [$class: 'StringParameterValue', name: 'build_no', value: "${IMAGE_NO}"],
-                                    [$class: 'StringParameterValue', name: 'device_id', value: "generic"],
-                                    [$class: 'StringParameterValue', name: 'gitbranch', value: "alex-test"]
+                                    [$class: 'StringParameterValue', name: 'gitbranch', value: "${GITBRANCH_OEM_SANITY}"],
+                                    [$class: 'StringParameterValue', name: 'device_id', value: "generic"]
                                     ]
+                    } else {
+                        echo "Skip build MaaS image."
                     }
                 }
             }
