@@ -59,7 +59,7 @@ pipeline{
                         echo 'Starting to make iso to MAAS image.'
                         build job: 'sanity-3-testflinger-dell-bto-focal-fossa-990000-00001-staging-testing',
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                                    [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
+                                    [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
                                     [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
                                     [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
                                     [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
