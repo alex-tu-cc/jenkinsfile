@@ -1,7 +1,6 @@
 err_count = 0
 unstable_count = 0
 INJ_RECOVERY = "true"
-skip_build_maas = "true"
 cmd_before_plan = "wget -O /home/ubuntu/checkbox-sideload-dev-staging.json  http://office.cctu.space:3000/alextu/internal-db/raw/branch/master/checkbox-sideload-dev-staging.json; prepare-checkbox-sanity --side-load-conf /home/ubuntu/checkbox-sideload-dev-staging.json"
 pipeline{
     agent any
@@ -32,7 +31,7 @@ pipeline{
         stage('iso to MAAS compatible image'){
             steps{
                 script{
-                    skip_build_maas = "false"
+                    skip_build_maas = "true"
                     if ( "${IMAGE_NO}" == "no-provision" || "${SKIP_BUILD_IMG}" == "true" ){
                         skip_build_maas = "true"
                     }
@@ -317,13 +316,13 @@ pipeline{
     post {
         always {
             script {
-                if( err_count == 0 ) {
-                    echo "Running infrastructure-dispatch-auto-release"
-                    build job: 'infrastructure-dispatch-auto-release',
-                    parameters: [string(name: 'UPSTREAM', value: '${JOB_NAME}'),
-                                string(name: 'SANITY_LINK', value: '${JOB_NAME}')
-                                ]
-                }
+                //if( err_count == 0 ) {
+                //    echo "Running infrastructure-dispatch-auto-release"
+                //    build job: 'infrastructure-dispatch-auto-release',
+                //    parameters: [string(name: 'UPSTREAM', value: '${JOB_NAME}'),
+                //                string(name: 'SANITY_LINK', value: '${JOB_NAME}')
+                //                ]
+                //}
                 echo "${err_count}"
                 echo "${unstable_count}"
                 if (err_count > 0) {
