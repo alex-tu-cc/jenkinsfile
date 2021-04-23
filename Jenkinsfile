@@ -2,7 +2,6 @@ err_count = 0
 unstable_count = 0
 INJ_RECOVERY = "true"
 skip_build_maas = "true"
-cmd_before_plan = "wget -O /home/ubuntu/checkbox-sideload-dev-staging.json  http://office.cctu.space:3000/alextu/internal-db/raw/branch/master/checkbox-sideload-dev-staging.json; prepare-checkbox-sanity --side-load-conf /home/ubuntu/checkbox-sideload-dev-staging.json"
 pipeline{
     agent any
     options{
