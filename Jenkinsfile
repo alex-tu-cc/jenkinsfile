@@ -69,29 +69,29 @@ pipeline{
             steps{
                 parallel(
                     //job990000-00001start
-                    job99000000001:{
-                        script{
-                            echo 'sanity check for VM vm-testing-somerville'
-                            def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-990000-00001-staging-testing', propagate: false,
-                            parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                                    [$class: 'StringParameterValue', name: 'PLAN', value: "ls"],
-                                    [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
-                                    [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
-                                    [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"],
-                                    [$class: 'StringParameterValue', name: 'DEVICE_IP', value: "192.168.101.216"]
-                                     ]
-                            if (result.getResult() == "UNSTABLE"){
-                                echo 'The result of sanity check of VM vm-testing-somerville is UNSTABLE'
-                                unstable_count++
-                            }
-                            else if (result.getResult() == "FAILURE"){
-                                echo 'The result of sanity check of VM vm-testing-somerville is FAILURE'
-                                err_count++
-                            } else {
-                                echo 'The result of sanity check of VM vm-testing-somerville is PASS'
-                            }
-                        }
-                    },
+                    //job99000000001:{
+                    //    script{
+                    //        echo 'sanity check for VM vm-testing-somerville'
+                    //        def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-990000-00001-staging-testing', propagate: false,
+                    //        parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
+                    //                [$class: 'StringParameterValue', name: 'PLAN', value: "ls"],
+                    //                [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
+                    //                [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
+                    //                [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"],
+                    //                [$class: 'StringParameterValue', name: 'DEVICE_IP', value: "192.168.101.216"]
+                    //                 ]
+                    //        if (result.getResult() == "UNSTABLE"){
+                    //            echo 'The result of sanity check of VM vm-testing-somerville is UNSTABLE'
+                    //            unstable_count++
+                    //        }
+                    //        else if (result.getResult() == "FAILURE"){
+                    //            echo 'The result of sanity check of VM vm-testing-somerville is FAILURE'
+                    //            err_count++
+                    //        } else {
+                    //            echo 'The result of sanity check of VM vm-testing-somerville is PASS'
+                    //        }
+                    //    }
+                    //},
                     //job802010-28303start
                     job80201028303:{
                         script{
