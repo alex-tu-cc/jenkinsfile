@@ -98,6 +98,7 @@ pipeline{
                             echo 'sanity check for 802010-28303 RKL I+N EVT'
                             def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-edge-staging-802010-28303-staging', propagate: false,
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
+                                    [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test"],
                                     [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
                                     [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
                                     [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
@@ -119,6 +120,7 @@ pipeline{
                             echo 'sanity check for 201901-26774(I+N not support RTD3)'
                             def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-nvstaging-201901-26774-staging', propagate: false,
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
+                                [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test"],
                                 [$class: 'StringParameterValue', name: 'PLAN', value: "graphics-dgpu-auto-switch-testing"],
                                 [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
                                 [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
@@ -168,6 +170,7 @@ pipeline{
                             echo 'sanity check for 201810-26535'
                             def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-201810-26535-staging', propagate: false,
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
+                              [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test"],
                               [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
                               [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
                               [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
