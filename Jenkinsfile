@@ -140,28 +140,28 @@ pipeline{
                     //job201901-26774end
                     //sanity-3-testflinger-dell-bto-focal-fossa-staging-902005-27873-staging
                     //job902005-27873start
-                    job90200527873:{
-                        script{
-                            echo 'sanity check for 902005-27873 I+N RTD3'
-                            def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-staging-902005-27873-staging', propagate: false,
-                            parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                                    [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
-                                    [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
-                                    [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
-                                    [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
-                                     ]
-                            if (result.getResult() == "UNSTABLE"){
-                                echo 'The result of sanity check of 902005-27873 I+N RTD3 is UNSTABLE'
-                                unstable_count++
-                            }
-                            else if (result.getResult() == "FAILURE"){
-                                echo 'The result of sanity check of 902005-27873 I+N RTD3 is FAILURE'
-                                err_count++
-                            } else {
-                                echo 'The result of sanity check of 902005-27873 I+N RTD3 is SUCCESS'
-                            }
-                        }
-                    },
+                    //job90200527873:{
+                    //    script{
+                    //        echo 'sanity check for 902005-27873 I+N RTD3'
+                    //        def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-staging-902005-27873-staging', propagate: false,
+                    //        parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
+                    //                [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
+                    //                [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
+                    //                [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
+                    //                [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
+                    //                 ]
+                    //        if (result.getResult() == "UNSTABLE"){
+                    //            echo 'The result of sanity check of 902005-27873 I+N RTD3 is UNSTABLE'
+                    //            unstable_count++
+                    //        }
+                    //        else if (result.getResult() == "FAILURE"){
+                    //            echo 'The result of sanity check of 902005-27873 I+N RTD3 is FAILURE'
+                    //            err_count++
+                    //        } else {
+                    //            echo 'The result of sanity check of 902005-27873 I+N RTD3 is SUCCESS'
+                    //        }
+                    //    }
+                    //},
                     //job20181026535start
                     job20181026535:{
                         script{
