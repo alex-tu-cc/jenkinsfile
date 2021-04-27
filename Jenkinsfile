@@ -1,7 +1,7 @@
 err_count = 0
 unstable_count = 0
 INJ_RECOVERY = "true"
-
+cmd_before_plan = ""
 pipeline{
     agent any
     options{
@@ -36,7 +36,7 @@ pipeline{
                         skip_build_maas = "true"
                     }
                     if ( "${skip_build_maas}" != "true" ){
-                        echo "Starting to make iso to MAAS image. skip_build_maas=${skip_build_maas}"
+                        echo 'Starting to test on VM.'
                         build job: 'sanity-1-generic-iso-to-maas-img',
                         parameters: [[$class: 'StringParameterValue', name: 'jenkins_job', value: "${TARGET_IMG}"],
                                     [$class: 'StringParameterValue', name: 'build_no', value: "${IMAGE_NO}"],
