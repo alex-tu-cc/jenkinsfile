@@ -92,11 +92,11 @@ pipeline{
                     //        }
                     //    }
                     //},
-                    //job802010-28303start
-                    job80201028303:{
+                    //job102010-28303start
+                    job10201028303:{
                         script{
-                            echo 'sanity check for 802010-28303 RKL I+N EVT'
-                            def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-edge-staging-802010-28303-staging', propagate: false,
+                            echo 'sanity check for 102010-28303 RKL I+N EVT'
+                            def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-edge-staging-102010-28303-staging', propagate: false,
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
                                     [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test"],
                                     [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
@@ -105,12 +105,14 @@ pipeline{
                                     [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
                                      ]
                             if (result.getResult() == "UNSTABLE"){
-                                echo 'The result of sanity check of 802010-28303 RKL I+N EVT is UNSTABLE'
+                                echo 'The result of sanity check of 102010-28303 RKL I+N EVT is UNSTABLE'
                                 unstable_count++
                             }
                             else if (result.getResult() == "FAILURE"){
-                                echo 'The result of sanity check of 802010-28303 RKL I+N EVT is FAILURE'
+                                echo 'The result of sanity check of 102010-28303 RKL I+N EVT is FAILURE'
                                 err_count++
+                            } else {
+                                echo 'The result of sanity check of 102010-28303 RKL I+N EVT is PASS'
                             }
                         }
                     },
