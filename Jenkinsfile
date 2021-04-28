@@ -171,7 +171,10 @@ pipeline {
             when { environment name: 'is_update_pkgs', value: 'yes' }
             steps { script {
                 try {
+                // TODO: polling the status till the Jenkins done the build.
+                // 1. check "nextBuildNumber" from {jenkins-job}/api/json before triggering remote server.
                       build("${STAGE_NAME}")
+                // 2. check "lastBuild" and it's "building" and "result" by {jenkins-job}/{build number}/api/json
                 } catch(e) {
                     unstable ("${STAGE_NAME} failed but continue.")
                 }
