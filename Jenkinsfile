@@ -28,27 +28,6 @@ pipeline{
                 }
             }
         }
-        //stage('iso to MAAS compatible image'){
-        //    steps{
-        //        script{
-        //            skip_build_maas = "true"
-        //            if ( "${IMAGE_NO}" == "no-provision" || "${SKIP_BUILD_IMG}" == "true" ){
-        //                skip_build_maas = "true"
-        //            }
-        //            if ( "${skip_build_maas}" != "true" ){
-        //                echo 'Starting to test on VM.'
-        //                build job: 'sanity-1-generic-iso-to-maas-img',
-        //                parameters: [[$class: 'StringParameterValue', name: 'jenkins_job', value: "${TARGET_IMG}"],
-        //                            [$class: 'StringParameterValue', name: 'build_no', value: "${IMAGE_NO}"],
-        //                            [$class: 'StringParameterValue', name: 'gitbranch', value: "${GITBRANCH_OEM_SANITY}"],
-        //                            [$class: 'StringParameterValue', name: 'device_id', value: "generic"]
-        //                            ]
-        //            } else {
-        //                echo "Skip build MaaS image."
-        //            }
-        //        }
-        //    }
-        //}
         stage('test on VM'){
             steps{
                 script{
@@ -151,6 +130,26 @@ pipeline{
                                     err_count++
                                 } else {
                                     echo 'sanity-1-generic-iso-to-maas-img is PASS'
+                                }
+                                echo 'Starting to test MaaS img on VM 990000-00010.'
+                                result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-990000-00010-staging', propagate: false,
+                                    parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
+                                            [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/screen-pkg-not-public"],
+                                            [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
+                                            [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
+                                            [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
+                                            [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "false"]
+                                             ]
+
+                                if (result.getResult() == "UNSTABLE"){
+                                    echo 'Starting to test MaaS img on VM 990000-00010 is UNSTABLE'
+                                    unstable_count++
+                                }
+                                else if (result.getResult() == "FAILURE"){
+                                    echo 'Starting to test MaaS img on VM 990000-00010 is FAILURE'
+                                    err_count++
+                                } else {
+                                    echo 'Starting to test MaaS img on VM 990000-00010 is PASS'
                                 }
                             } else {
                                 echo "Skip build MaaS image."
