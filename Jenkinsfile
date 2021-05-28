@@ -28,27 +28,27 @@ pipeline{
                 }
             }
         }
-        stage('iso to MAAS compatible image'){
-            steps{
-                script{
-                    skip_build_maas = "true"
-                    if ( "${IMAGE_NO}" == "no-provision" || "${SKIP_BUILD_IMG}" == "true" ){
-                        skip_build_maas = "true"
-                    }
-                    if ( "${skip_build_maas}" != "true" ){
-                        echo 'Starting to test on VM.'
-                        build job: 'sanity-1-generic-iso-to-maas-img',
-                        parameters: [[$class: 'StringParameterValue', name: 'jenkins_job', value: "${TARGET_IMG}"],
-                                    [$class: 'StringParameterValue', name: 'build_no', value: "${IMAGE_NO}"],
-                                    [$class: 'StringParameterValue', name: 'gitbranch', value: "${GITBRANCH_OEM_SANITY}"],
-                                    [$class: 'StringParameterValue', name: 'device_id', value: "generic"]
-                                    ]
-                    } else {
-                        echo "Skip build MaaS image."
-                    }
-                }
-            }
-        }
+        //stage('iso to MAAS compatible image'){
+        //    steps{
+        //        script{
+        //            skip_build_maas = "true"
+        //            if ( "${IMAGE_NO}" == "no-provision" || "${SKIP_BUILD_IMG}" == "true" ){
+        //                skip_build_maas = "true"
+        //            }
+        //            if ( "${skip_build_maas}" != "true" ){
+        //                echo 'Starting to test on VM.'
+        //                build job: 'sanity-1-generic-iso-to-maas-img',
+        //                parameters: [[$class: 'StringParameterValue', name: 'jenkins_job', value: "${TARGET_IMG}"],
+        //                            [$class: 'StringParameterValue', name: 'build_no', value: "${IMAGE_NO}"],
+        //                            [$class: 'StringParameterValue', name: 'gitbranch', value: "${GITBRANCH_OEM_SANITY}"],
+        //                            [$class: 'StringParameterValue', name: 'device_id', value: "generic"]
+        //                            ]
+        //            } else {
+        //                echo "Skip build MaaS image."
+        //            }
+        //        }
+        //    }
+        //}
         stage('test on VM'){
             steps{
                 script{
@@ -66,7 +66,7 @@ pipeline{
                 }
             }
         }
-        stage('start testflinger tests'){
+        stage('start testflinger tests and test MaaS BTW'){
             steps{
                 parallel(
                     //job102010-28303start
@@ -124,6 +124,36 @@ pipeline{
                                 err_count++
                             } else {
                                 echo 'The result of sanity check of 201901-26774 I+N NON RTD3 is PASS'
+                            }
+                        }
+                    },
+                    //job990000-00010start
+                    job99000000010:{
+                        script{
+                            echo 'build MaaS and test it on VM 990000-00010'
+                            if ( "${IMAGE_NO}" == "no-provision" || "${SKIP_BUILD_IMG}" == "true" ){
+                                skip_build_maas = "true"
+                            }
+                            if ( "${skip_build_maas}" != "true" ){
+                                echo 'Starting to make iso to MAAS image.'
+                                def result = build job: 'sanity-1-generic-iso-to-maas-img', propagate: false,
+                                parameters: [[$class: 'StringParameterValue', name: 'jenkins_job', value: "${TARGET_IMG}"],
+                                            [$class: 'StringParameterValue', name: 'build_no', value: "${IMAGE_NO}"],
+                                            [$class: 'StringParameterValue', name: 'gitbranch', value: "${GITBRANCH_OEM_SANITY}"],
+                                            [$class: 'StringParameterValue', name: 'device_id', value: "generic"]
+                                            ]
+                                if (result.getResult() == "UNSTABLE"){
+                                    echo 'sanity-1-generic-iso-to-maas-img is UNSTABLE'
+                                    unstable_count++
+                                }
+                                else if (result.getResult() == "FAILURE"){
+                                    echo 'sanity-1-generic-iso-to-maas-img is FAILURE'
+                                    err_count++
+                                } else {
+                                    echo 'sanity-1-generic-iso-to-maas-img is PASS'
+                                }
+                            } else {
+                                echo "Skip build MaaS image."
                             }
                         }
                     },
