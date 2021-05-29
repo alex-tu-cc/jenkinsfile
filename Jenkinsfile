@@ -245,28 +245,28 @@ pipeline{
                     //},
                     // sanity-3-testflinger-dell-bto-focal-fossa-edge-staging-201708-25689-staging
                     //job201708-25689start
-                    job20170825689:{
-                        script{
-                            echo 'sanity check for 201708-25689(I+A)'
-                            def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-edge-staging-201708-25689-staging', propagate: false,
-                            parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                                    [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
-                                    [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
-                                    [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
-                                    [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
-                                     ]
-                            if (result.getResult() == "UNSTABLE"){
-                                echo 'The result of sanity check of 201708-25689(I+A) is UNSTABLE'
-                                unstable_count++
-                            }
-                            else if (result.getResult() == "FAILURE"){
-                                echo 'The result of sanity check of 201708-25689(I+A) is FAILURE'
-                                err_count++
-                            } else {
-                                echo 'The result of sanity check of 201708-25689(I+A) is PASS'
-                            }
-                        }
-                    },
+                    //job20170825689:{
+                    //    script{
+                    //        echo 'sanity check for 201708-25689(I+A)'
+                    //        def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-edge-staging-201708-25689-staging', propagate: false,
+                    //        parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
+                    //                [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
+                    //                [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
+                    //                [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
+                    //                [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
+                    //                 ]
+                    //        if (result.getResult() == "UNSTABLE"){
+                    //            echo 'The result of sanity check of 201708-25689(I+A) is UNSTABLE'
+                    //            unstable_count++
+                    //        }
+                    //        else if (result.getResult() == "FAILURE"){
+                    //            echo 'The result of sanity check of 201708-25689(I+A) is FAILURE'
+                    //            err_count++
+                    //        } else {
+                    //            echo 'The result of sanity check of 201708-25689(I+A) is PASS'
+                    //        }
+                    //    }
+                    //},
                     //job201708-25689end
                     //job202005-27873start
                     //job20200527873:{
