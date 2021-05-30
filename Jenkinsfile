@@ -54,7 +54,7 @@ pipeline{
                 script{
                     if ( "${SKIP_BUILD_IMG}" != "true" ){
                         echo 'Starting to make iso to MAAS image.'
-                        build job: 'sanity-3-testflinger-dell-bto-focal-fossa-990000-00001-staging-testing',
+                        build job: 'sanity-3-testflinger-dell-bto-focal-fossa-990000-00001-staging',
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
                                     [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test"],
                                     [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
