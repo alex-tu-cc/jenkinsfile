@@ -29,84 +29,30 @@ pipeline{
                 }
             }
         }
-        stage('test on VM'){
+        stage('start testflinger tests and test MaaS BTW'){
             steps{
-                script{
-                    if ( "${SKIP_BUILD_IMG}" != "true" ){
-                        echo 'Starting to make iso to MAAS image.'
-                        build job: 'sanity-3-testflinger-dell-bto-focal-fossa-990000-00001-staging',
+                parallel(
+                    //job990000-00001start
+                    job99000000001:{
+                        script{
+                            echo 'sanity check for VM sanity-3-testflinger-dell-bto-focal-fossa-990000-00001-staging'
+                            def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-990000-00001-staging', propagate: false,
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                                    [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/screen-pkg-not-public"],
                                     [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
                                     [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
                                     [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
                                     [$class: 'StringParameterValue', name: 'GITBRANCH_OEM_SANITY', value: "${GITBRANCH_OEM_SANITY}"],
-                                    [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
+                                    [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "true"]
                                      ]
-                    }
-                }
-            }
-        }
-        stage('start testflinger tests and test MaaS BTW'){
-            steps{
-                parallel(
-                    //job102010-28303start
-                    job10201028303:{
-                        script{
-                            echo 'sanity check for 102010-28303 RKL I+N EVT'
-                            def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-edge-staging-102010-28303-staging', propagate: false,
-                            parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                                    [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
-                                    [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
-                                    [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
-                                    [$class: 'StringParameterValue', name: 'GITBRANCH_OEM_SANITY', value: "${GITBRANCH_OEM_SANITY}"],
-                                    [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
-                                     ]
-                            //parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                            //        [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
-                            //        [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
-                            //        [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
-                            //        [$class: 'StringParameterValue', name: 'CHECKBOX_SIDE_LOAD_CONF', value: "${CHECKBOX_SIDE_LOAD_CONF}"]
-                            //         ]
                             if (result.getResult() == "UNSTABLE"){
-                                echo 'The result of sanity check of 102010-28303 RKL I+N EVT is UNSTABLE'
+                                echo 'The result of sanity check of VM 990000-00001 inject recovery is UNSTABLE'
                                 unstable_count++
                             }
                             else if (result.getResult() == "FAILURE"){
-                                echo 'The result of sanity check of 102010-28303 RKL I+N EVT is FAILURE'
+                                echo 'The result of sanity check of VM 990000-00001 inject recovery is FAILURE'
                                 err_count++
                             } else {
-                                echo 'The result of sanity check of 102010-28303 RKL I+N EVT is PASS'
-                            }
-                        }
-                    },
-                    //job102010-26744start
-                    job20190126774:{
-                        script{
-                            echo 'sanity check for 201901-26774 I+N NON RTD3'
-                            def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-201901-26774-staging', propagate: false,
-                            parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                                    [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
-                                    [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
-                                    [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
-                                    [$class: 'StringParameterValue', name: 'GITBRANCH_OEM_SANITY', value: "${GITBRANCH_OEM_SANITY}"],
-                                    [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
-                                     ]
-                            //parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                            //        [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
-                            //        [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
-                            //        [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
-                            //        [$class: 'StringParameterValue', name: 'CHECKBOX_SIDE_LOAD_CONF', value: "${CHECKBOX_SIDE_LOAD_CONF}"]
-                            //         ]
-                            if (result.getResult() == "UNSTABLE"){
-                                echo 'The result of sanity check of 201901-26774 I+N NON RTD3 is UNSTABLE'
-                                unstable_count++
-                            }
-                            else if (result.getResult() == "FAILURE"){
-                                echo 'The result of sanity check of 201901-26774 I+N NON RTD3 is FAILURE'
-                                err_count++
-                            } else {
-                                echo 'The result of sanity check of 201901-26774 I+N NON RTD3 is PASS'
+                                echo 'The result of sanity check of VM 990000-00001 inject recovery is PASS'
                             }
                         }
                     },
