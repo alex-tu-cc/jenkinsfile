@@ -111,6 +111,7 @@ pipeline {
                 stage('dell-bto-focal-fossa') {
                     steps {
                         clean_manifest('staging');
+                        fishManifest series:'focal',tag:'fossa-next' ,target:'fossa-next', base:'fossa',delete:'1931969'
                         fishManifest series:'focal',tag:'fossa-staging' ,target:'fossa-staging', base:'fossa',delete:'1864658'
                         //clean_manifest('nvstaging');
                         ////fishManifest series:'focal', target:'fossa'
