@@ -65,8 +65,9 @@ set -x
 GIT_SSH_COMMAND="ssh -p 10022" git clone git@office.cctu.space:alextu/internal-tools.git
 git -C internal-tools rev-parse HEAD
 #bash internal-tools/trigger-jenkins-job.sh
-bash internal-tools/trigger-autosanity-pool.sh -p fossa-next
 bash internal-tools/trigger-autosanity-pool.sh -p fossa-staging
+sleep 15m
+bash internal-tools/trigger-autosanity-pool.sh -p fossa-next
 sleep 15m
 bash internal-tools/trigger-autosanity-pool.sh -p fossa-edge-staging
 EOF
