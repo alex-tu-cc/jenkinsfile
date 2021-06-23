@@ -173,7 +173,7 @@ pipeline{
                             echo 'sanity check for 201810-26535'
                             def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-201810-26535-staging', propagate: false,
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                              [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test"],
+                              [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/valid-thermal-zone-trip-points .*power-management/system-low-power-idle"],
                               [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
                               [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
                               [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
