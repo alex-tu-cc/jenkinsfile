@@ -47,26 +47,26 @@ pipeline {
         //        }
         //    } }
         //}
-        stage('pack-fish-ubuntu-desktop-xstaging') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
-        stage('pack-fish-ubuntu-desktop') {
-            when { environment name: 'is_update_pkgs', value: 'yes' }
-            steps { script {
-                try {
-                      build("${STAGE_NAME}")
-                } catch(e) {
-                    unstable ("${STAGE_NAME} failed but continue.")
-                }
-            } }
-        }
+        //stage('pack-fish-ubuntu-desktop-xstaging') {
+        //    when { environment name: 'is_update_pkgs', value: 'yes' }
+        //    steps { script {
+        //        try {
+        //              build("${STAGE_NAME}")
+        //        } catch(e) {
+        //            unstable ("${STAGE_NAME} failed but continue.")
+        //        }
+        //    } }
+        //}
+        //stage('pack-fish-ubuntu-desktop') {
+        //    when { environment name: 'is_update_pkgs', value: 'yes' }
+        //    steps { script {
+        //        try {
+        //              build("${STAGE_NAME}")
+        //        } catch(e) {
+        //            unstable ("${STAGE_NAME} failed but continue.")
+        //        }
+        //    } }
+        //}
         stage('pack-fish-openssh') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
             steps { script {
@@ -111,13 +111,18 @@ pipeline {
                 stage('dell-bto-focal-fossa') {
                     steps {
                         clean_manifest('staging');
+                        fishManifest series:'focal',tag:'fossa-staging' ,target:'fossa-staging', base:'fossa',delete:'1931969'
+
+                        clean_manifest('next');
                         fishManifest series:'focal',tag:'fossa-next' ,target:'fossa-next', base:'fossa',delete:'1931969'
-                        fishManifest series:'focal',tag:'fossa-staging' ,target:'fossa-staging', base:'fossa',delete:'1864658'
+
+                        clean_manifest('edge-staging');
+                        fishManifest series:'focal',tag:'fossa-edge-staging' ,target:'fossa-edge-staging', base:'fossa',delete:'1931969'
+
                         //clean_manifest('nvstaging');
                         ////fishManifest series:'focal', target:'fossa'
                         //fishManifest series:'focal', target:'fossa-nvstaging', base:'fossa', update:'1899160', delete:'1867897'
-                        clean_manifest('edge-staging');
-                        fishManifest series:'focal',tag:'fossa-edge-staging' ,target:'fossa-edge-staging', base:'fossa',delete:'1864658 1876673 1891603 1909531'
+
                         //clean_manifest('rklstaging');
                         //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905351', delete:'1876673'
                         //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1907532', delete:'1891603'
