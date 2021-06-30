@@ -176,6 +176,7 @@ pipeline{
                     //        echo 'sanity check for 902005-27873 I+N RTD3'
                     //        def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-staging-902005-27873-staging', propagate: false,
                     //        parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
+                    //                [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/valid-thermal-zone-trip-points .*power-management/system-low-power-idle .*check-turbostat-long-idle-s0ix-residency .*check-turbostat-s2i-s0ix-residency .*miscellanea/fan_stress_reaction"],
                     //                [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
                     //                [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
                     //                [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
