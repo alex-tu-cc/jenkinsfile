@@ -84,6 +84,7 @@ cd ubuntu-archive-tools
 #apt-cache show \$(apt-cache madison \$(cat prepare-checkbox-sanity.list | grep Inst | awk '{print \$2}' | xargs) | grep 'checkbox-dev' | awk '{print \$1}') | grep -E "(Package)|(Source)" | awk '{print \$2}' | uniq > checkbox.list
 #cat /tmp/log1 | grep -E "(Package)|(Source)" | awk '{print \\$2}' | uniq > /tmp/src-pkg-list
 ./copy-package \\$(cat /tmp/src-pkg-list | xargs) --from="ppa:oem-solutions-engineers/ubuntu/checkbox-snapshot-staging" --from-suit=focal --to="ppa:oem-solutions-engineers/ubuntu/checkbox-snapshot" --to-suite=focal -b -y --skip-missing
+./copy-package plainbox-provider-pc-sanity --from=ppa:oem-solutions-engineers/ubuntu/checkbox-snapshot-staging --from-suit=focal --to=ppa:oem-solutions-engineers/ubuntu/plainbox-provider-pc-sanity-snapshot --to-suite=focal -b -y --skip-missing
 EOF
                 docker cp do.sh oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/home/oem-taipei-bot/
                 docker cp src-pkg-list oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME}:/tmp/
