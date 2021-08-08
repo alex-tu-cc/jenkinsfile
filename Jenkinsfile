@@ -119,30 +119,6 @@ pipeline{
                     //        }
                     //    }
                     //},
-                    //jobs202005-27873-start
-                    //job20200527873:{
-                    //    script{
-                    //        echo 'sanity check for FIO-PIL-C9_202005-27873 (I+N RTD3)'
-                    //        def result = build job: 'sanity-3-testflinger-dummy-202005-27873-staging', propagate: false,
-                    //        parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                    //                [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test"],
-                    //                [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
-                    //                [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
-                    //                [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
-                    //                [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
-                    //                 ]
-                    //        if (result.getResult() == "UNSTABLE"){
-                    //            echo 'The result of sanity check of FIO-PIL-C9_202005-27873 (I+N RTD3) is UNSTABLE'
-                    //            unstable_count++
-                    //        }
-                    //        else if (result.getResult() == "FAILURE"){
-                    //            echo 'The result of sanity check of FIO-PIL-C9_202005-27873 (I+N RTD3) is FAILURE'
-                    //            err_count++
-                    //        } else {
-                    //            echo 'The result of sanity check of FIO-PIL-C9_202005-27873 (I+N RTD3) is PASS'
-                    //        }
-                    //    }
-                    //},
                     //job201901-26774start
                     //job20190126774:{
                     //    script{
@@ -169,31 +145,6 @@ pipeline{
                     //    }
                     //},
                     //job201901-26774end
-                    //sanity-3-testflinger-dell-bto-focal-fossa-staging-902005-27873-staging
-                    //job902005-27873start
-                    //job90200527873:{
-                    //    script{
-                    //        echo 'sanity check for 902005-27873 I+N RTD3'
-                    //        def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-staging-902005-27873-staging', propagate: false,
-                    //        parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                    //                [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/valid-thermal-zone-trip-points .*power-management/system-low-power-idle .*check-turbostat-long-idle-s0ix-residency .*check-turbostat-s2i-s0ix-residency .*miscellanea/fan_stress_reaction"],
-                    //                [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
-                    //                [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
-                    //                [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
-                    //                [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
-                    //                 ]
-                    //        if (result.getResult() == "UNSTABLE"){
-                    //            echo 'The result of sanity check of 902005-27873 I+N RTD3 is UNSTABLE'
-                    //            unstable_count++
-                    //        }
-                    //        else if (result.getResult() == "FAILURE"){
-                    //            echo 'The result of sanity check of 902005-27873 I+N RTD3 is FAILURE'
-                    //            err_count++
-                    //        } else {
-                    //            echo 'The result of sanity check of 902005-27873 I+N RTD3 is SUCCESS'
-                    //        }
-                    //    }
-                    //},
                     //job20181026535start
                     job20181026535:{
                         script{
@@ -220,30 +171,30 @@ pipeline{
                         }
                     },
                     //sanity-3-testflinger-dummy-202005-27873-staging
-                    job20200527873:{
-                        script{
-                            echo 'sanity check for 202005-27873 (I+N RTD3)'
-                            def result = build job: 'sanity-3-testflinger-dummy-202005-27873-staging', propagate: false,
-                            parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                              [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/valid-thermal-zone-trip-points .*power-management/system-low-power-idle .*check-turbostat-long-idle-s0ix-residency .*check-turbostat-s2i-s0ix-residency .*miscellanea/fan_stress_reaction .*cpu-low-power-idle .*turbostat_long_idle_result .*storage_device_nvme1n1"],
-                              [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
-                              [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
-                              [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
-                              [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
-                              ]
-                            if (result.getResult() == "UNSTABLE"){
-                                echo 'The result of sanity check of 202005-27873 (I+N RTD3)'
-                                unstable_count++
-                            }
-                            else if (result.getResult() == "FAILURE"){
-                                echo 'The result of sanity check of 202005-27873 (I+N RTD3) is UNSTABLE'
-                                err_count++
-                            }
-                            else {
-                                echo 'The result of sanity check of 202005-27873 (I+N RTD3) is FAILURE is PASS'
-                            }
-                        }
-                    },
+                    //job20200527873:{
+                    //    script{
+                    //        echo 'sanity check for 202005-27873 (I+N RTD3)'
+                    //        def result = build job: 'sanity-3-testflinger-dummy-202005-27873-staging', propagate: false,
+                    //        parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
+                    //          [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/valid-thermal-zone-trip-points .*power-management/system-low-power-idle .*check-turbostat-long-idle-s0ix-residency .*check-turbostat-s2i-s0ix-residency .*miscellanea/fan_stress_reaction .*cpu-low-power-idle .*turbostat_long_idle_result .*storage_device_nvme1n1"],
+                    //          [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
+                    //          [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
+                    //          [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
+                    //          [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
+                    //          ]
+                    //        if (result.getResult() == "UNSTABLE"){
+                    //            echo 'The result of sanity check of 202005-27873 (I+N RTD3)'
+                    //            unstable_count++
+                    //        }
+                    //        else if (result.getResult() == "FAILURE"){
+                    //            echo 'The result of sanity check of 202005-27873 (I+N RTD3) is UNSTABLE'
+                    //            err_count++
+                    //        }
+                    //        else {
+                    //            echo 'The result of sanity check of 202005-27873 (I+N RTD3) is FAILURE is PASS'
+                    //        }
+                    //    }
+                    //},
                     //// sanity-3-testflinger-dell-bto-focal-fossa-edge-202101-28624-staging
                     ////job202101-28624end
                     ////job20210128624start
