@@ -34,7 +34,7 @@ pipeline{
                 script{
                     if ( "${SKIP_BUILD_IMG}" != "true" ){
                         echo 'Test on VM by recovery injection'
-                        build job: 'sanity-3-testflinger-inject-recovery-990000-00021-staging',
+                        build job: 'sanity-3-testflinger-fossa-master-990000-00022-staging',
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
                                     [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/screen-pkg-not-public .*stress/reboot.*"],
                                     [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
@@ -113,7 +113,7 @@ pipeline{
                     //job990000-00010start
                     job99000000010:{
                         script{
-                            echo 'build MaaS and test it on VM 990000-00020'
+                            echo 'build MaaS and test it on VM 990000-00022'
                             if ( "${IMAGE_NO}" == "no-provision" || "${SKIP_BUILD_IMG}" == "true" ){
                                 skip_build_maas = "true"
                             }
@@ -135,8 +135,8 @@ pipeline{
                                 } else {
                                     echo 'sanity-1-generic-iso-to-maas-img is PASS'
                                 }
-                                echo 'Starting to test MaaS img on VM 990000-00020.'
-                                result = build job: 'sanity-3-testflinger-maas-deploy-990000-00020-staging', propagate: false,
+                                echo 'Starting to test MaaS img on VM 990000-00022.'
+                                result = build job: 'sanity-3-testflinger-fossa-master-990000-00022-staging', propagate: false,
                                     parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
                                             [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/screen-pkg-not-public"],
                                             [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
@@ -147,14 +147,14 @@ pipeline{
                                              ]
 
                                 if (result.getResult() == "UNSTABLE"){
-                                    echo 'Starting to test MaaS img on VM 990000-00020 is UNSTABLE'
+                                    echo 'Starting to test MaaS img on VM 990000-00022 is UNSTABLE'
                                     unstable_count++
                                 }
                                 else if (result.getResult() == "FAILURE"){
-                                    echo 'Starting to test MaaS img on VM 990000-00020 is FAILURE'
+                                    echo 'Starting to test MaaS img on VM 990000-00022 is FAILURE'
                                     err_count++
                                 } else {
-                                    echo 'Starting to test MaaS img on VM 990000-00020 is PASS'
+                                    echo 'Starting to test MaaS img on VM 990000-00022 is PASS'
                                 }
                             } else {
                                 echo "Skip build MaaS image."
