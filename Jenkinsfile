@@ -54,7 +54,7 @@ pipeline{
                 script{
                     if ( "${SKIP_BUILD_IMG}" != "true" ){
                         echo 'Starting to make iso to MAAS image.'
-                        build job: 'sanity-3-testflinger-dell-bto-focal-fossa-990000-00001-staging',
+                        build job: 'sanity-3-testflinger-inject-recovery-990000-00021-staging',
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
                                     [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test"],
                                     [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
@@ -146,30 +146,30 @@ pipeline{
                     //},
                     //job201901-26774end
                     //job20181026535start
-                    job20181026535:{
-                        script{
-                            echo 'sanity check for 201810-26535'
-                            def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-201810-26535-staging', propagate: false,
-                            parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                              [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/valid-thermal-zone-trip-points .*power-management/system-low-power-idle .*check-turbostat-long-idle-s0ix-residency .*check-turbostat-s2i-s0ix-residency .*miscellanea/fan_stress_reaction"],
-                              [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
-                              [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
-                              [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
-                              [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
-                              ]
-                            if (result.getResult() == "UNSTABLE"){
-                                echo 'The result of sanity check of 201810-26535 is UNSTABLE'
-                                unstable_count++
-                            }
-                            else if (result.getResult() == "FAILURE"){
-                                echo 'The result of sanity check of 201810-26535 is FAILURE'
-                                err_count++
-                            }
-                            else {
-                                echo 'The result of sanity check of 201810-26535 is PASS'
-                            }
-                        }
-                    },
+                    //job20181026535:{
+                    //    script{
+                    //        echo 'sanity check for 201810-26535'
+                    //        def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-201810-26535-staging', propagate: false,
+                    //        parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
+                    //          [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/valid-thermal-zone-trip-points .*power-management/system-low-power-idle .*check-turbostat-long-idle-s0ix-residency .*check-turbostat-s2i-s0ix-residency .*miscellanea/fan_stress_reaction"],
+                    //          [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-smoke-test"],
+                    //          [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
+                    //          [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
+                    //          [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
+                    //          ]
+                    //        if (result.getResult() == "UNSTABLE"){
+                    //            echo 'The result of sanity check of 201810-26535 is UNSTABLE'
+                    //            unstable_count++
+                    //        }
+                    //        else if (result.getResult() == "FAILURE"){
+                    //            echo 'The result of sanity check of 201810-26535 is FAILURE'
+                    //            err_count++
+                    //        }
+                    //        else {
+                    //            echo 'The result of sanity check of 201810-26535 is PASS'
+                    //        }
+                    //    }
+                    //},
                     //sanity-3-testflinger-dummy-202005-27873-staging
                     //job20200527873:{
                     //    script{
