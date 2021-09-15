@@ -35,8 +35,8 @@ pipeline{
                     //job990000-00001start
                     job99000000001:{
                         script{
-                            echo 'sanity check for VM sanity-3-testflinger-dell-bto-focal-fossa-990000-00001-staging'
-                            def result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-990000-00001-staging', propagate: false,
+                            echo 'sanity check for VM sanity-3-testflinger-inject-recovery-990000-00021-staging'
+                            def result = build job: 'sanity-3-testflinger-inject-recovery-990000-00021-staging', propagate: false,
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
                                     [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/screen-pkg-not-public"],
                                     [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
@@ -46,21 +46,21 @@ pipeline{
                                     [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "true"]
                                      ]
                             if (result.getResult() == "UNSTABLE"){
-                                echo 'The result of sanity check of VM 990000-00001 inject recovery is UNSTABLE'
+                                echo 'The result of sanity check of VM 990000-00021 inject recovery is UNSTABLE'
                                 unstable_count++
                             }
                             else if (result.getResult() == "FAILURE"){
-                                echo 'The result of sanity check of VM 990000-00001 inject recovery is FAILURE'
+                                echo 'The result of sanity check of VM 990000-00021 inject recovery is FAILURE'
                                 err_count++
                             } else {
-                                echo 'The result of sanity check of VM 990000-00001 inject recovery is PASS'
+                                echo 'The result of sanity check of VM 990000-00021 inject recovery is PASS'
                             }
                         }
                     },
                     //job990000-00010start
                     job99000000010:{
                         script{
-                            echo 'build MaaS and test it on VM 990000-00010'
+                            echo 'build MaaS and test it on VM 990000-00020'
                             if ( "${IMAGE_NO}" == "no-provision" || "${SKIP_BUILD_IMG}" == "true" ){
                                 skip_build_maas = "true"
                             }
@@ -82,8 +82,8 @@ pipeline{
                                 } else {
                                     echo 'sanity-1-generic-iso-to-maas-img is PASS'
                                 }
-                                echo 'Starting to test MaaS img on VM 990000-00010.'
-                                result = build job: 'sanity-3-testflinger-dell-bto-focal-fossa-990000-00010-staging', propagate: false,
+                                echo 'Starting to test MaaS img on VM 990000-00020.'
+                                result = build job: 'sanity-3-testflinger-maas-deploy-990000-00020-staging', propagate: false,
                                     parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
                                             [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/screen-pkg-not-public"],
                                             [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
@@ -94,14 +94,14 @@ pipeline{
                                              ]
 
                                 if (result.getResult() == "UNSTABLE"){
-                                    echo 'Starting to test MaaS img on VM 990000-00010 is UNSTABLE'
+                                    echo 'Starting to test MaaS img on VM 990000-00020 is UNSTABLE'
                                     unstable_count++
                                 }
                                 else if (result.getResult() == "FAILURE"){
-                                    echo 'Starting to test MaaS img on VM 990000-00010 is FAILURE'
+                                    echo 'Starting to test MaaS img on VM 990000-00020 is FAILURE'
                                     err_count++
                                 } else {
-                                    echo 'Starting to test MaaS img on VM 990000-00010 is PASS'
+                                    echo 'Starting to test MaaS img on VM 990000-00020 is PASS'
                                 }
                             } else {
                                 echo "Skip build MaaS image."
