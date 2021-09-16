@@ -62,7 +62,7 @@ def trigger(String server, String user, String job) {
 cat << EOF > do.sh
 #!/bin/bash
 set -x
-GIT_SSH_COMMAND="ssh -p 10022" git clone git@office.cctu.space:alextu/internal-tools.git
+GIT_SSH_COMMAND="ssh -p 10022" git clone git@somerville-jenkins.cctu.space:alextu/internal-tools.git
 git -C internal-tools rev-parse HEAD
 #bash internal-tools/trigger-jenkins-job.sh
 bash internal-tools/trigger-autosanity-pool.sh -p fossa-staging
