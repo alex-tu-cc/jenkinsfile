@@ -77,8 +77,8 @@ cat << EOF > do.sh
 #!/bin/bash
 set -x
 #sudo add-apt-repository ppa:checkbox-dev/ppa -y
-sudo apt-get update; sudo apt-get install -y bzr ubuntu-dev-tools
-bzr branch lp:ubuntu-archive-tools
+sudo apt-get update; sudo apt-get install -y git ubuntu-dev-tools
+git clone --depth 1  https://git.launchpad.net/ubuntu-archive-tools
 cd ubuntu-archive-tools
 #apt-get install --dry-run prepare-checkbox-sanity 2>&1 | tee prepare-checkbox-sanity.list
 #apt-cache show \$(apt-cache madison \$(cat prepare-checkbox-sanity.list | grep Inst | awk '{print \$2}' | xargs) | grep 'checkbox-dev' | awk '{print \$1}') | grep -E "(Package)|(Source)" | awk '{print \$2}' | uniq > checkbox.list
