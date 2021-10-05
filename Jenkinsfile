@@ -97,49 +97,20 @@ pipeline {
         //        }
         //    } }
         //}
-        stage('parallel-clean') {
-            parallel {
-                stage('oem-taipei-bot-0') {
-                    agent {
-                       label 'docker'
-                    }
-                    steps {
-                        sh 'cat /etc/*-release'
-                    }
-                }
-                // use stage as image name. e.g. dell-bto-bionic-bionic-master, dell-bot-bionic-beaver-osp1 ..etc
-                stage('dell-bto-focal-fossa') {
-                    steps {
-                        clean_manifest('staging');
-                        fishManifest series:'focal',tag:'fossa-staging' ,target:'fossa-staging', base:'fossa',delete:'1931969'
-
-                        clean_manifest('edge-staging');
-                        fishManifest series:'focal',tag:'fossa-edge-staging' ,target:'fossa-edge-staging', base:'fossa',delete:'1931969'
-
-                        //clean_manifest('nvstaging');
-                        ////fishManifest series:'focal', target:'fossa'
-                        //fishManifest series:'focal', target:'fossa-nvstaging', base:'fossa', update:'1899160', delete:'1867897'
-
-                        //clean_manifest('rklstaging');
-                        //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905351', delete:'1876673'
-                        //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1907532', delete:'1891603'
-                        //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1905893'
-                        //fishManifest series:'focal', target:'fossa-rklstaging', base:'fossa', update:'1909908'
-                        //clean_manifest('alloem','');
-                        //fishManifest series:'focal', target:'fossa-alloem', base:'fossa-edge', update:'1888630', delete:'1862919'
-                        //clean_manifest('audiostaging');
-                    }
-                }
-                // It's failed here
-                //// use stage as image name. e.g. dell-bto-bionic-bionic-master, dell-bot-bionic-beaver-osp1 ..etc
-                //stage('dell-bto-focal-fossa-edge') {
-                //    steps {
-                //        clean_manifest('alloem');
-                //        fishManifest series:'focal', target:'fossa-alloem', base:'fossa', update:'1888630', delete:'1862919'
-                //    }
-                //}
-            }
-        }
+         // use stage as image name. e.g. dell-bto-bionic-bionic-master, dell-bot-bionic-beaver-osp1 ..etc
+         stage('dell-bto-focal-fossa-next') {
+             steps {
+                 clean_manifest('edge-staging');
+                 fishManifest series:'focal',tag:'fossa-edge-staging' ,target:'fossa-edge-staging', base:'fossa-next',delete:'1933063'
+             }
+         }
+         // use stage as image name. e.g. dell-bto-bionic-bionic-master, dell-bot-bionic-beaver-osp1 ..etc
+         stage('dell-bto-focal-fossa') {
+             steps {
+                 clean_manifest('staging');
+                 fishManifest series:'focal',tag:'fossa-staging' ,target:'fossa-staging', base:'fossa',delete:'1931969'
+             }
+         }
         stage('snapshot-checkbox-dev-testing') {
             when { environment name: 'is_update_pkgs', value: 'yes' }
             steps { script {
@@ -194,7 +165,6 @@ def clean_manifest(String b) {
         try {
         sh '''#!/bin/bash
             set -ex
-
             if [ -z "${STAGE_NAME##*bionic*}" ]; then
                 RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot \
                                         --volumes-from ${DOCKER_VOL} ${DOCKER_REPO}/oem-taipei-bot:bionic"
@@ -210,6 +180,31 @@ def clean_manifest(String b) {
                 bzr commit -m \\"replaced by ${STAGE_NAME} bzr \\$VER\\" || true && bzr log | head && \
                 bzr push :parent || echo "skip ${STAGE_NAME}-${branch}" \
                 "
+            elif [ -z "${STAGE_NAME##*fossa-next*}" ]; then
+                echo "[DEBUG] Handling branches for fossa-next"
+                # special case that fossa-edge/fossa-edge-staging is tracking fossa-next.
+                # so we don't want to have another  fossa-next-edge-staging.
+                if [ "$branch" = "edge-staging" ]; then
+                    echo "[DEBUG] specially handle fossa-edge-staging"
+                    RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot \
+                                            --volumes-from ${DOCKER_VOL} ${DOCKER_REPO}/oem-taipei-bot"
+                    $RUN_DOCKER_TAIPEI_BOT " \
+                    git clone lp:~oem-solutions-engineers/bugsy-config/+git/somerville-project-manifests -b ${STAGE_NAME} --depth=1 && \
+                    cd somerville-project-manifests && \
+                    git rev-parse --short HEAD && \
+                    git push -f origin origin/${STAGE_NAME}:dell-bto-focal-fossa-edge-staging \
+                    "
+                else
+                    RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot \
+                                            --volumes-from ${DOCKER_VOL} ${DOCKER_REPO}/oem-taipei-bot"
+    
+                    $RUN_DOCKER_TAIPEI_BOT " \
+                    git clone lp:~oem-solutions-engineers/bugsy-config/+git/somerville-project-manifests -b ${STAGE_NAME} --depth=1 && \
+                    cd somerville-project-manifests && \
+                    git rev-parse --short HEAD && \
+                    git push -f origin origin/${STAGE_NAME}:${STAGE_NAME}-${branch} \
+                    "
+                fi
             else
                 RUN_DOCKER_TAIPEI_BOT="docker run --name oem-taipei-bot-${BUILD_TAG}-${STAGE_NAME} --rm -h oem-taipei-bot \
                                         --volumes-from ${DOCKER_VOL} ${DOCKER_REPO}/oem-taipei-bot"
