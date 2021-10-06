@@ -101,7 +101,7 @@ pipeline {
          stage('dell-bto-focal-fossa-next') {
              steps {
                  clean_manifest('edge-staging');
-                 fishManifest series:'focal',tag:'fossa-edge-staging' ,target:'fossa-edge-staging', base:'fossa-next',delete:'1933063'
+                 fishManifest series:'focal',tag:'fossa-edge-staging' ,target:'fossa-edge-staging', base:'fossa-next',delete:'1933063 1931212 1909530'
              }
          }
          // use stage as image name. e.g. dell-bto-bionic-bionic-master, dell-bot-bionic-beaver-osp1 ..etc
