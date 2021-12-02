@@ -2,7 +2,7 @@ err_count = 0
 unstable_count = 0
 INJ_RECOVERY = "true"
 cmd_before_plan = ""
-skip_build_maas = ""
+skip_build_maas = "true"
 pipeline{
     agent any
     options{
