@@ -34,9 +34,9 @@ pipeline{
                 script{
                     if ( "${SKIP_BUILD_IMG}" != "true" ){
                         echo 'Test on VM by recovery injection'
-                        build job: 'sanity-3-testflinger-fossa-master-990000-00022-staging',
+                        build job: 'sanity-3-testflinger-dummy-990000-00024-staging',
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
-                                    [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/screen-pkg-not-public .*stress/reboot.*"],
+                                    [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/screen-pkg-not-public"],
                                     [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
                                     [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
                                     [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
