@@ -34,7 +34,7 @@ pipeline{
                 script{
                     if ( "${SKIP_BUILD_IMG}" != "true" ){
                         echo 'Test on VM by recovery injection'
-                        build job: 'sanity-3-testflinger-inject-recovery-990000-00021-staging',
+                        build job: 'sanity-3-testflinger-dummy-990000-00023-staging',
                             parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
                                     [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/screen-pkg-not-public"],
                                     [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
@@ -43,6 +43,15 @@ pipeline{
                                     [$class: 'StringParameterValue', name: 'GITBRANCH_OEM_SANITY', value: "${GITBRANCH_OEM_SANITY}"],
                                     [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
                                      ]
+                        //build job: 'sanity-3-testflinger-inject-recovery-990000-00021-staging',
+                        //    parameters: [[$class: 'StringParameterValue', name: 'IMAGE_NO', value: "${IMAGE_NO}"],
+                        //            [$class: 'StringParameterValue', name: 'EXCLUDE_TASK', value: ".*miscellanea/debsums .*somerville/platform-meta-test .*miscellanea/screen-pkg-not-public"],
+                        //            [$class: 'StringParameterValue', name: 'PLAN', value: "pc-sanity-software-test"],
+                        //            [$class: 'StringParameterValue', name: 'CMD_BEFOR_RUN_PLAN', value: "${cmd_before_plan}"],
+                        //            [$class: 'StringParameterValue', name: 'TARGET_IMG', value: "${TARGET_IMG}"],
+                        //            [$class: 'StringParameterValue', name: 'GITBRANCH_OEM_SANITY', value: "${GITBRANCH_OEM_SANITY}"],
+                        //            [$class: 'StringParameterValue', name: 'INJ_RECOVERY', value: "${INJ_RECOVERY}"]
+                        //             ]
                     }
                 }
             }
