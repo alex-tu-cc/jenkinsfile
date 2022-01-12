@@ -65,7 +65,6 @@ def pack_fish() {
             copyArtifacts(
             projectName: "${JOB_NAME}",
             filter: "artifacts/*.dell",
-            target: 'latest_build',
             selector: lastSuccessful());
         } catch(e) {
             echo "No lastSuccessful build, let treat this build as 1st build"
